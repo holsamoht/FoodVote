@@ -17,6 +17,9 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 import android.content.Context;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View.OnTouchListener;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -52,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements
     String mLongitudeText;
     YelpAPI yAPI;
     Button logout;
+    Button B1, B2, B3, B4, B5;
+    TextView C1, C2, C3, C4, C5;
+    int count1, count2, count3, count4, count5 = 0;
+    TextView switchActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +99,28 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
             }
         });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        switchActivity = (TextView) findViewById(R.id.textView);
+
+        switchActivity.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                // Toast.makeText(getApplicationContext(), "Swiped left.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
 
@@ -114,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
+        /*
         // Use if developing on an android phone.
         if (mLastLocation != null) {
             mLatitudeText = String.valueOf(mLastLocation.getLatitude());
@@ -123,8 +153,8 @@ public class MainActivity extends AppCompatActivity implements
             ParseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
-        
-        /*
+        */
+
         // Use if developing on an emulator.
         if (mLastLocation == null) {
             mLatitudeText = "32.8810";
@@ -134,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements
             ParseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
-        */
     }
 
 
@@ -226,28 +255,86 @@ public class MainActivity extends AppCompatActivity implements
         String R5 = Buisness5.get("name").toString();
 
         // GET EACH TEXT VIEW BOX.
-        Button B1 = (Button)findViewById(R.id.Button1);
-        Button B2 = (Button)findViewById(R.id.Button2);
-        Button B3 = (Button)findViewById(R.id.Button3);
-        Button B4 = (Button)findViewById(R.id.Button4);
-        Button B5 = (Button)findViewById(R.id.Button5);
+        B1 = (Button)findViewById(R.id.Button1);
+        B2 = (Button)findViewById(R.id.Button2);
+        B3 = (Button)findViewById(R.id.Button3);
+        B4 = (Button)findViewById(R.id.Button4);
+        B5 = (Button)findViewById(R.id.Button5);
 
-        // SET EACH EXT VIEW BOX TO THE RESTAURANT NAME.
+        C1 = (TextView)findViewById(R.id.textView1);
+        C2 = (TextView)findViewById(R.id.textView2);
+        C3 = (TextView)findViewById(R.id.textView3);
+        C4 = (TextView)findViewById(R.id.textView4);
+        C5 = (TextView)findViewById(R.id.textView5);
+
+        // SET EACH TEXT VIEW BOX TO THE RESTAURANT NAME.
         B1.setText(R1);
+        C1.setText(String.valueOf(count1));
         B2.setText(R2);
+        C2.setText(String.valueOf(count2));
         B3.setText(R3);
+        C3.setText(String.valueOf(count3));
         B4.setText(R4);
+        C4.setText(String.valueOf(count4));
         B5.setText(R5);
+        C5.setText(String.valueOf(count5));
     }
 
 
     public void RestaurantClicked(View v){
+        /*
         Context context = getApplicationContext();
         CharSequence text = "Restaurant Clicked";
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+        */
+
+        B1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count1++;
+                C1.setText(String.valueOf(count1));
+                Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        B2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count2++;
+                C2.setText(String.valueOf(count2));
+                Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        B3.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count3++;
+                C3.setText(String.valueOf(count3));
+                Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        B4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count4++;
+                C4.setText(String.valueOf(count4));
+                Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        B5.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                count5++;
+                C5.setText(String.valueOf(count5));
+                Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
