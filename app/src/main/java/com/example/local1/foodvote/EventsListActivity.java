@@ -43,29 +43,20 @@ public class EventsListActivity extends AppCompatActivity {
         try {
             userEventIDs = currentUser.getCurrentUser().getList("eventsList");
 
-            /*
             for (int i = 0; i < userEventIDs.size(); i++) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                // query.whereEqualTo("objectId", userEventIDs.get(i));
-                query.getInBackground(userEventIDs.get(i) ,new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (e == null) {
-                            userEvents.add(object.getString("eventName"));
-                            Log.println(Log.ERROR, "Main: ", "" + userEvents.get(0));
-                        }
-                    }
-                });
+                userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
             }
-            */
 
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEventIDs);
+            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
             ListView listEvents = (ListView) findViewById(R.id.listView);
             listEvents.setAdapter(adapter);
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
             ListView listEvents = (ListView) findViewById(R.id.listView);
             listEvents.setAdapter(adapter);
+        } catch (ParseException e) {
+
         }
 
         addButton = (Button)findViewById(R.id.addEvent);

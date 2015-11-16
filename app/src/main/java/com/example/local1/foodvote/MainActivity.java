@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Each buisness is now represented as an array entry.
+        Log.println(Log.ERROR, "Main:", "Whereererer" + YelpJSON);
         JSONArray businesses = (JSONArray) response.get("businesses");
 
         // FOR NOW MANUALLY PICK THE 1st 5 RESTAURANTS.
