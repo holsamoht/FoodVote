@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -50,16 +51,39 @@ public class EventCreateActivity extends AppCompatActivity {
                     ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
+                    event.saveInBackground();
+                    Intent intent = new Intent(EventCreateActivity.this,
+                            MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    /*
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            Log.println(Log.ERROR, "Main:", "Save finishes");
+                            Log.println(Log.ERROR, "Main:", "Save finishes.");
+                            ParseQuery<ParseObject> query = new ParseQuery("Event");
+                            query.whereEqualTo("eventName", nameOfEvent);
+                            query.findInBackground(new FindCallback() {
+                                @Override
+                                public void done(List list, ParseException e) {
+                                    Log.println(Log.ERROR, "Main:", "ParseException done.");
+                                }
+
+
+                                @Override
+                                public void done(Object o, Throwable throwable) {
+                                    Log.println(Log.ERROR, "Main:", "Throwable done.");
+                                }
+
+                            });
+
                             Intent intent = new Intent(EventCreateActivity.this,
                                     MainActivity.class);
                             startActivity(intent);
                             finish();
                         }
                     });
+                    */
 
                     /*
                     Calendar c = Calendar.getInstance();

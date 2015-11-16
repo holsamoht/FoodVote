@@ -52,7 +52,7 @@ public class LoginSignUpActivity extends Activity {
                                     // If user exists and authenticated, send user to MainActivity.class.
                                     Intent intent = new Intent(
                                             LoginSignUpActivity.this,
-                                            EventsListActivity.class);
+                                            MainActivity.class);
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(),
                                             "Successfully logged in.",

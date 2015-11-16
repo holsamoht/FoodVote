@@ -41,7 +41,7 @@ public class StartupActivity extends AppCompatActivity {
             // Check if user data was successfully obtained.
             if (currentUser != null) {
                 // Send logged in user to MainActivity.class
-                Intent intent = new Intent(StartupActivity.this, EventsListActivity.class);
+                Intent intent = new Intent(StartupActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
