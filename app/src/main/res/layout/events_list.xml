@@ -10,8 +10,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
-        android:id="@+id/create"
+        android:text="Add"
+        android:id="@+id/addEvent"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/textView6"
         android:layout_toEndOf="@+id/textView6" />
@@ -19,41 +19,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:id="@+id/cancel"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_alignTop="@+id/create"
-        android:layout_toRightOf="@+id/create"
-        android:layout_toEndOf="@+id/create" />
+        android:text="Remove"
+        android:id="@+id/removeEvent"
+        android:layout_alignTop="@+id/addEvent"
+        android:layout_toRightOf="@+id/addEvent"
+        android:layout_toEndOf="@+id/addEvent"
+        android:layout_marginLeft="46dp"
+        android:layout_marginStart="46dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Event Title"
+        android:text="Events List"
         android:id="@+id/textView6"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_below="@+id/textView6"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="e.g. Food Adventures"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Friends"
-        android:id="@+id/textView7"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/editText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -61,9 +40,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
-        android:layout_below="@+id/textView7"
+        android:layout_below="@+id/textView6"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/create" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/addEvent" />
 
 </RelativeLayout>
