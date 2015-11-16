@@ -51,72 +51,35 @@ public class EventCreateActivity extends AppCompatActivity {
                     ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
-                    event.saveInBackground();
-                    Intent intent = new Intent(EventCreateActivity.this,
-                            MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    /*
-                    event.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Log.println(Log.ERROR, "Main:", "Save finishes.");
-                            ParseQuery<ParseObject> query = new ParseQuery("Event");
-                            query.whereEqualTo("eventName", nameOfEvent);
-                            query.findInBackground(new FindCallback() {
-                                @Override
-                                public void done(List list, ParseException e) {
-                                    Log.println(Log.ERROR, "Main:", "ParseException done.");
-                                }
-
-
-                                @Override
-                                public void done(Object o, Throwable throwable) {
-                                    Log.println(Log.ERROR, "Main:", "Throwable done.");
-                                }
-
-                            });
-
-                            Intent intent = new Intent(EventCreateActivity.this,
-                                    MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-                    */
-
-                    /*
-                    Calendar c = Calendar.getInstance();
-                    int seconds = c.get(Calendar.SECOND);
-                    final String sec = seconds + "";
-                    event.put("privateId", nameOfEvent + sec);
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                ParseQuery query = new ParseQuery("Event");
-                                query.whereEqualTo("privateId", nameOfEvent + sec);
-                                query.getFirstInBackground(new GetCallback() {
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                query.whereEqualTo("eventName", nameOfEvent);
+                                query.findInBackground(new FindCallback<ParseObject>() {
                                     @Override
-                                    public void done(ParseObject parseObject, ParseException e) {
+                                    public void done(List<ParseObject> list, ParseException e) {
                                         if (e == null) {
-                                            currentUser.getCurrentUser().add("eventsList", parseObject.getObjectId());
-                                            Intent intent = new Intent(EventCreateActivity.this,
-                                                    MainActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                            currentUser.getCurrentUser().add("eventsList",
+                                                    list.get(0).getObjectId());
+                                            currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    if (e == null) {
+                                                        Intent intent = new Intent(EventCreateActivity.this,
+                                                                MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                }
+                                            });
                                         }
-                                    }
-
-                                    @Override
-                                    public void done(Object o, Throwable throwable) {
-                                        Log.println(Log.ERROR, "Main:", "In throwable");
                                     }
                                 });
                             }
                         }
                     });
-                    */
                 }
             }
         });

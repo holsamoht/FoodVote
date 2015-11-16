@@ -13,7 +13,9 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -29,6 +31,7 @@ public class EventsListActivity extends AppCompatActivity {
     Button addButton;
     Button removeButton;
     ParseUser currentUser;
+    List<String> userEventIDs = new ArrayList<String>();
     List<String> userEvents = new ArrayList<String>();
     String[] noEvents = {"You currently have no events."};
 
@@ -38,10 +41,25 @@ public class EventsListActivity extends AppCompatActivity {
         setContentView(R.layout.events_list);
 
         try {
-            currentUser.getCurrentUser();
-            userEvents = currentUser.getList("eventsList");
+            userEventIDs = currentUser.getCurrentUser().getList("eventsList");
 
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
+            /*
+            for (int i = 0; i < userEventIDs.size(); i++) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                // query.whereEqualTo("objectId", userEventIDs.get(i));
+                query.getInBackground(userEventIDs.get(i) ,new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (e == null) {
+                            userEvents.add(object.getString("eventName"));
+                            Log.println(Log.ERROR, "Main: ", "" + userEvents.get(0));
+                        }
+                    }
+                });
+            }
+            */
+
+            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEventIDs);
             ListView listEvents = (ListView) findViewById(R.id.listView);
             listEvents.setAdapter(adapter);
         } catch (NullPointerException e) {
