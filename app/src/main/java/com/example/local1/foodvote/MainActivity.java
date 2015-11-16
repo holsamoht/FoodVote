@@ -237,22 +237,22 @@ public class MainActivity extends AppCompatActivity implements
             System.exit(1);
         }
 
-        // Each buisness is now represented as an array entry.
+        // Each business is now represented as an array entry.
         JSONArray businesses = (JSONArray) response.get("businesses");
 
         // FOR NOW MANUALLY PICK THE 1st 5 RESTAURANTS.
-        JSONObject Buisness1 = (JSONObject) businesses.get(0);
-        JSONObject Buisness2 = (JSONObject) businesses.get(1);
-        JSONObject Buisness3 = (JSONObject) businesses.get(2);
-        JSONObject Buisness4 = (JSONObject) businesses.get(3);
-        JSONObject Buisness5 = (JSONObject) businesses.get(4);
+        JSONObject Business1 = (JSONObject) businesses.get(0);
+        JSONObject Business2 = (JSONObject) businesses.get(1);
+        JSONObject Business3 = (JSONObject) businesses.get(2);
+        JSONObject Business4 = (JSONObject) businesses.get(3);
+        JSONObject Business5 = (JSONObject) businesses.get(4);
 
         // GET THE NAME OF EACH RESTAURANT.
-        String R1 = Buisness1.get("name").toString();
-        String R2 = Buisness2.get("name").toString();
-        String R3 = Buisness3.get("name").toString();
-        String R4 = Buisness4.get("name").toString();
-        String R5 = Buisness5.get("name").toString();
+        String R1 = Business1.get("name").toString();
+        String R2 = Business2.get("name").toString();
+        String R3 = Business3.get("name").toString();
+        String R4 = Business4.get("name").toString();
+        String R5 = Business5.get("name").toString();
 
         // GET EACH TEXT VIEW BOX.
         B1 = (Button)findViewById(R.id.Button1);
