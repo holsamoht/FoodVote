@@ -69,5 +69,6 @@ public class EventsListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 }

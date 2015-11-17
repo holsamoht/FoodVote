@@ -39,7 +39,7 @@ public class EventCreateActivity extends AppCompatActivity {
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     List<String> eventParticipants = new ArrayList<String>();
-    Boolean[] clicked;
+    List<Boolean> clicked = new ArrayList<Boolean>();
     String[] noFriends = {"You currently have no friends."};
     String[] friends = {"we9f8efe", "wqvsfewr39"};
 
@@ -54,39 +54,46 @@ public class EventCreateActivity extends AppCompatActivity {
         cancelButton = (Button)findViewById(R.id.cancelButton);
 
         try {
-            /*
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
                 userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
             }
-            */
 
-            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, friends);
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, userFriends);
             listFriends = (ListView) findViewById(R.id.friendsList);
             listFriends.setAdapter(adapter);
-            clicked = new Boolean[2];
+
+            for (int i = 0; i < userFriends.size(); i++) {
+                clicked.add(false);
+            }
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
             listFriends = (ListView) findViewById(R.id.friendsList);
             listFriends.setAdapter(adapter);
-        } /* catch (ParseException e) {
+        } catch (ParseException e) {
             Log.println(Log.ERROR, "MAIN: ", "EventsListActivity.java - Unable to parse friends names.");
-        } */
+        }
 
         listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (userFriends.size() == 0) {
+                    Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
                 if (clicked.get(position) == true) {
                     eventParticipants.remove(friends[position]);
                     listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                    clicked.add(position, false);
+                    clicked.set(position, false);
                 }
                 else {
                     eventParticipants.add(friends[position]);
                     listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
-                    clicked.add(position, true);
+                    clicked.set(position, true);
                 }
             }
         });
@@ -137,6 +144,13 @@ public class EventCreateActivity extends AppCompatActivity {
             }
         });
 
-
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EventCreateActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }
