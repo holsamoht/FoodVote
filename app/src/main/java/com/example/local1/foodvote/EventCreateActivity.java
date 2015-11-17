@@ -1,12 +1,18 @@
 package com.example.local1.foodvote;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -18,6 +24,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -25,9 +32,16 @@ public class EventCreateActivity extends AppCompatActivity {
     EditText eventName;
     Button createButton;
     Button cancelButton;
-    String nameOfEvent;
     ParseUser currentUser;
     Event createdEvent;
+    String nameOfEvent;
+    ListView listFriends;
+    List<String> userFriendIDs = new ArrayList<String>();
+    List<String> userFriends = new ArrayList<String>();
+    List<String> eventParticipants = new ArrayList<String>();
+    Boolean[] clicked;
+    String[] noFriends = {"You currently have no friends."};
+    String[] friends = {"we9f8efe", "wqvsfewr39"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +52,44 @@ public class EventCreateActivity extends AppCompatActivity {
 
         createButton = (Button)findViewById(R.id.createButton);
         cancelButton = (Button)findViewById(R.id.cancelButton);
+
+        try {
+            /*
+            userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
+
+            for (int i = 0; i < userFriendIDs.size(); i++) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
+            }
+            */
+
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, friends);
+            listFriends = (ListView) findViewById(R.id.friendsList);
+            listFriends.setAdapter(adapter);
+            clicked = new Boolean[2];
+        } catch (NullPointerException e) {
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
+            listFriends = (ListView) findViewById(R.id.friendsList);
+            listFriends.setAdapter(adapter);
+        } /* catch (ParseException e) {
+            Log.println(Log.ERROR, "MAIN: ", "EventsListActivity.java - Unable to parse friends names.");
+        } */
+
+        listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (clicked.get(position) == true) {
+                    eventParticipants.remove(friends[position]);
+                    listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                    clicked.add(position, false);
+                }
+                else {
+                    eventParticipants.add(friends[position]);
+                    listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
+                    clicked.add(position, true);
+                }
+            }
+        });
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +103,7 @@ public class EventCreateActivity extends AppCompatActivity {
                     ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
+                    event.addAll("eventParticipants", eventParticipants);
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -83,5 +136,7 @@ public class EventCreateActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 }

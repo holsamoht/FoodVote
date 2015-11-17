@@ -56,7 +56,7 @@ public class EventsListActivity extends AppCompatActivity {
             ListView listEvents = (ListView) findViewById(R.id.listView);
             listEvents.setAdapter(adapter);
         } catch (ParseException e) {
-
+            Log.println(Log.ERROR, "MAIN: ", "EventsListActivity.java - Unable to parse event names.");
         }
 
         addButton = (Button)findViewById(R.id.addEvent);

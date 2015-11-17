@@ -111,12 +111,17 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         switchActivity = (TextView) findViewById(R.id.textView);
-
         switchActivity.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
             @Override
             public void onSwipeLeft() {
-                // Toast.makeText(getApplicationContext(), "Swiped left.", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 startActivity(intent);
                 finish();
             }
