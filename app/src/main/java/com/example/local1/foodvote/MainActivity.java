@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
     Button B1, B2, B3, B4, B5;
     TextView C1, C2, C3, C4, C5;
     int count1, count2, count3, count4, count5 = 0;
-    TextView switchActivity;
+    RelativeLayout switchActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,13 +111,96 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        switchActivity = (TextView) findViewById(R.id.textView);
-
+        switchActivity = (RelativeLayout) findViewById(R.id.entireScreen);
         switchActivity.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
             @Override
             public void onSwipeLeft() {
-                // Toast.makeText(getApplicationContext(), "Swiped left.", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        B1 = (Button) findViewById(R.id.Button1);
+        B1.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        B2 = (Button) findViewById(R.id.Button2);
+        B2.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        B3 = (Button) findViewById(R.id.Button3);
+        B3.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        B4 = (Button) findViewById(R.id.Button4);
+        B4.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        B5 = (Button) findViewById(R.id.Button5);
+        B5.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, EventsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 startActivity(intent);
                 finish();
             }

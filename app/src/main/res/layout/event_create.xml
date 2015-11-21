@@ -23,9 +23,9 @@
         android:layout_below="@+id/eventHeader"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="e.g. Food Adventures"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:hint="e.g. Food Date" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,6 +36,16 @@
         android:layout_alignRight="@+id/eventHeader"
         android:layout_alignEnd="@+id/eventHeader"
         android:layout_marginTop="37dp" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/friendsList"
+        android:layout_below="@+id/friendsHeader"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/createButton"
+        android:focusable="false" />
 
     <Button
         android:layout_width="wrap_content"
@@ -56,14 +66,5 @@
         android:layout_alignTop="@+id/createButton"
         android:layout_toRightOf="@+id/createButton"
         android:layout_toEndOf="@+id/createButton" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView2"
-        android:layout_below="@+id/friendsHeader"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/createButton" />
 
 </RelativeLayout>

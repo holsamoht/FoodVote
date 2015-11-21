@@ -20,7 +20,8 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".MainActivity"
-        android:weightSum="1" >
+        android:weightSum="1"
+        android:id="@+id/entireScreen">
 
         <Button
             android:id="@+id/logout"
@@ -170,14 +171,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="65dp"
             android:layout_marginEnd="65dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/textView"
-            android:layout_centerHorizontal="true"
-            android:inputType="none"
-            android:layout_below="@+id/textView5" />
 
     </RelativeLayout>
 

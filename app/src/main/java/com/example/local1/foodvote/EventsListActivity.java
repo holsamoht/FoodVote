@@ -13,7 +13,9 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -29,6 +31,7 @@ public class EventsListActivity extends AppCompatActivity {
     Button addButton;
     Button removeButton;
     ParseUser currentUser;
+    List<String> userEventIDs = new ArrayList<String>();
     List<String> userEvents = new ArrayList<String>();
     String[] noEvents = {"You currently have no events."};
 
@@ -38,15 +41,26 @@ public class EventsListActivity extends AppCompatActivity {
         setContentView(R.layout.events_list);
 
         try {
-            currentUser.getCurrentUser();
-            userEvents = currentUser.getList("eventsList");
+            userEventIDs = currentUser.getCurrentUser().getList("eventsList");
+            Log.println(Log.ERROR, "EventsListActivity: ", "" + userEventIDs.get(0));
+
+            for (int i = 0; i < userEventIDs.size(); i++) {
+                Log.println(Log.ERROR, "EventsListActivity: ", "In ParseQuery");
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
+            }
+            Log.println(Log.ERROR, "EventsListActivity: ", "Out ParseQuery");
 
             ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
-            ListView listEvents = (ListView) findViewById(R.id.listView);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
             listEvents.setAdapter(adapter);
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
-            ListView listEvents = (ListView) findViewById(R.id.listView);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
+            listEvents.setAdapter(adapter);
+        } catch (ParseException e) {
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
             listEvents.setAdapter(adapter);
         }
 
@@ -60,5 +74,6 @@ public class EventsListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 }

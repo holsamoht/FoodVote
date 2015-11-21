@@ -36,6 +36,8 @@
         </activity>
         <activity android:name=".EventCreateActivity" >
         </activity>
+        <activity android:name=".FriendsListActivity" >
+        </activity>
     </application>
 
 </manifest>
