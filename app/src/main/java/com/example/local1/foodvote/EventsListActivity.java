@@ -42,21 +42,26 @@ public class EventsListActivity extends AppCompatActivity {
 
         try {
             userEventIDs = currentUser.getCurrentUser().getList("eventsList");
+            Log.println(Log.ERROR, "EventsListActivity: ", "" + userEventIDs.get(0));
 
             for (int i = 0; i < userEventIDs.size(); i++) {
+                Log.println(Log.ERROR, "EventsListActivity: ", "In ParseQuery");
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                 userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
             }
+            Log.println(Log.ERROR, "EventsListActivity: ", "Out ParseQuery");
 
             ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
-            ListView listEvents = (ListView) findViewById(R.id.listView);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
             listEvents.setAdapter(adapter);
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
-            ListView listEvents = (ListView) findViewById(R.id.listView);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
             listEvents.setAdapter(adapter);
         } catch (ParseException e) {
-            Log.println(Log.ERROR, "MAIN: ", "EventsListActivity.java - Unable to parse event names.");
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
+            ListView listEvents = (ListView) findViewById(R.id.eventsList);
+            listEvents.setAdapter(adapter);
         }
 
         addButton = (Button)findViewById(R.id.addEvent);

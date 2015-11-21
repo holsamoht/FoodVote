@@ -54,6 +54,8 @@ public class EventCreateActivity extends AppCompatActivity {
         cancelButton = (Button)findViewById(R.id.cancelButton);
 
         try {
+            listFriends = (ListView) findViewById(R.id.friendsList);
+
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
@@ -62,7 +64,6 @@ public class EventCreateActivity extends AppCompatActivity {
             }
 
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, userFriends);
-            listFriends = (ListView) findViewById(R.id.friendsList);
             listFriends.setAdapter(adapter);
 
             for (int i = 0; i < userFriends.size(); i++) {
@@ -73,8 +74,19 @@ public class EventCreateActivity extends AppCompatActivity {
             listFriends = (ListView) findViewById(R.id.friendsList);
             listFriends.setAdapter(adapter);
         } catch (ParseException e) {
-            Log.println(Log.ERROR, "MAIN: ", "EventsListActivity.java - Unable to parse friends names.");
+            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
+            listFriends = (ListView) findViewById(R.id.friendsList);
+            listFriends.setAdapter(adapter);
         }
+
+        listFriends.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
