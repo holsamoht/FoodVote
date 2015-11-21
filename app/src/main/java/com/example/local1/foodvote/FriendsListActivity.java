@@ -63,8 +63,9 @@ public class FriendsListActivity extends AppCompatActivity {
                         /* TODO
                          * When trying to search for a user in the database, parseObject is null
                          * even though the user is in the database. Tried searching for angela, which
-                         * is in the database, and it says that the user does not exist.
-                        */
+                         * is in the database, and it says that the user does not exist. I'm not too
+                         * sure why, I think it's an issue with the 3 statements above.
+                         */
                         @Override
                         public void done(ParseObject parseObject, ParseException e) {
                             if (parseObject == null) {
