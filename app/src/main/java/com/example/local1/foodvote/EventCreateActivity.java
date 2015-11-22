@@ -124,7 +124,7 @@ public class EventCreateActivity extends AppCompatActivity implements
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
                 userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
             }
 

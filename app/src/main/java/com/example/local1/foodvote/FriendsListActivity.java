@@ -22,7 +22,9 @@ import com.parse.ParseQuery;
 import com.parse.FindCallback;
 import com.parse.SaveCallback;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity {
@@ -34,12 +36,19 @@ public class FriendsListActivity extends AppCompatActivity {
     List<String> userFriends = new ArrayList<String>();
     String[] noFriends = {"You currently have no friends."};
 
+    private ParseQuery<ParseUser> query = ParseUser.getQuery();
+    //query.selectKeys((Arrays.asList("username")));
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.friends_list);
 
+        try {
+            Log.println(Log.ERROR, "FriendsList: ", "FirstQueryElement = " + query.getFirst());
+        }catch(com.parse.ParseException c){
+            Log.println(Log.ERROR, "FriendsList: ", "FirstQueryElemnt not found");
+        }
         friendsList = (ListView) findViewById(R.id.friendsList);
 
         enteredInUsername = (EditText) findViewById(R.id.addFriend);
@@ -57,15 +66,63 @@ public class FriendsListActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter username.",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                    //ParseQuery<ParseUser> query = ParseQuery.getQuery("User");
+                    Log.println(Log.ERROR, "FriendsList: ", "friendUserName = " + friendUsername);
                     query.whereEqualTo("username", friendUsername);
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        public void done(List<ParseUser> userList, ParseException e) {
+
+                            if (e == null) {
+
+                                //boolean foundDupe = false;
+                                for (int i = 0; i < userList.size(); i++) {
+                                    List<String> listOfFriends;
+                                    listOfFriends = currentUser.getCurrentUser().getList("friendsList");
+                                    boolean foundDupe = false;
+                                    //listOfFriends.size();
+                                    /*for (int j = 0; j < listOfFriends.size(); j++) {
+                                        String str;
+                                        if (listOfFriends.get(j).equals(friendUsername)) {
+                                            Toast.makeText(getApplicationContext(), "User is already a friend",
+                                                    Toast.LENGTH_LONG).show();
+                                            foundDupe = true;
+                                            break;
+                                        }
+                                    }*/
+
+                                    if (foundDupe == false) {
+                                        currentUser.getCurrentUser().add("friendsList", userList.get(i).getObjectId());
+                                        //currentUser.getCurrentUser().add("friendsList", userList.get(0));
+                                        Toast.makeText(getApplicationContext(), userList.get(i).getUsername().toString() +
+                                                        " is now your friend!",
+                                                Toast.LENGTH_LONG).show();
+                                        currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+
+                                                Intent intent = getIntent();
+                                                overridePendingTransition(0, 0);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                                finish();
+                                                overridePendingTransition(0, 0);
+                                                startActivity(intent);
+                                            }
+                                        });
+                                    } else {
+                                        Log.println(Log.ERROR, "MAIN: ", "FriendsListActivity.java - unable to filter users");
+                                    }
+                                }
+                            }
+
+
+                            if(userList.size() == 0){
+                                Toast.makeText(getApplicationContext(), "User does not exist.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    /*
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
-                        /* TODO
-                         * When trying to search for a user in the database, parseObject is null
-                         * even though the user is in the database. Tried searching for angela, which
-                         * is in the database, and it says that the user does not exist. I'm not too
-                         * sure why, I think it's an issue with the 3 statements above.
-                         */
                         @Override
                         public void done(ParseObject parseObject, ParseException e) {
                             if (parseObject == null) {
@@ -88,6 +145,8 @@ public class FriendsListActivity extends AppCompatActivity {
                             }
                         }
                     });
+                    */
+
                 }
             }
         });
@@ -103,11 +162,12 @@ public class FriendsListActivity extends AppCompatActivity {
 
         try {
             // friendsList = (ListView) findViewById(R.id.friendsList);
-
+            Log.println(Log.ERROR, "FriendsList: ", "IN TRY!");
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
+            Log.println(Log.ERROR, "FriendsList: ", "Size = " + userFriendIDs.size());
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
                 userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
             }
 
@@ -125,3 +185,4 @@ public class FriendsListActivity extends AppCompatActivity {
         }
     }
 }
+
