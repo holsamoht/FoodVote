@@ -21,7 +21,6 @@ public class LoginSignUpActivity extends Activity {
     EditText username;
     String usernameText;
     String passwordText;
-    User newUser;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,12 +99,8 @@ public class LoginSignUpActivity extends Activity {
                             }
                         }
                     });
-
-                    newUser = new User(usernameText, passwordText);
                 }
-
             }
         });
-
     }
 }
