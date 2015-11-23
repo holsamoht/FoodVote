@@ -39,11 +39,11 @@ import java.util.List;
 
 public class EventCreateActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
     EditText eventName;
     Button createButton;
     Button cancelButton;
     ParseUser currentUser;
-    Event createdEvent;
     String nameOfEvent;
     ListView listFriends;
     List<String> userFriendIDs = new ArrayList<String>();
@@ -51,9 +51,9 @@ public class EventCreateActivity extends AppCompatActivity implements
     List<String> eventParticipants = new ArrayList<String>();
     List<Boolean> clicked = new ArrayList<Boolean>();
     String[] noFriends = {"You currently have no friends."};
-    String[] friends = {"we9f8efe", "wqvsfewr39"};
 
-    List<String> Restaurants = new ArrayList<String>();
+    List<String> restaurants = new ArrayList<String>();
+    List<Integer> votes = new ArrayList<Integer>();
 
     private static final String CONSUMER_KEY = "FQFe1MpY3PGvxKy-Aq702g";
     private static final String CONSUMER_SECRET = "u_ifYEaonk6W5sf24SCXiGPKx6I";
@@ -98,7 +98,8 @@ public class EventCreateActivity extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
-        //Use if developing on an android phone.
+        /*
+        // Use if developing on an android phone.
         if (mLastLocation != null) {
             mLatitudeText = String.valueOf(mLastLocation.getLatitude());
             mLongitudeText = String.valueOf(mLastLocation.getLongitude());
@@ -107,8 +108,9 @@ public class EventCreateActivity extends AppCompatActivity implements
             ParseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
+        */
 
-        /*Use if developing on an emulator.
+        // Use if developing on an emulator.
         if (mLastLocation == null) {
             mLatitudeText = "32.8810";
             mLongitudeText = "-117.2380";
@@ -116,7 +118,7 @@ public class EventCreateActivity extends AppCompatActivity implements
             String YelpJSON = setUpAPIRet(yAPI, location);
             ParseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
-        }*/
+        }
 
         try {
             listFriends = (ListView) findViewById(R.id.friendsList);
@@ -124,7 +126,7 @@ public class EventCreateActivity extends AppCompatActivity implements
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
                 userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
             }
 
@@ -163,11 +165,11 @@ public class EventCreateActivity extends AppCompatActivity implements
                 }
 
                 if (clicked.get(position) == true) {
-                    eventParticipants.remove(friends[position]);
+                    eventParticipants.remove(userFriends.get(position));
                     listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
                     clicked.set(position, false);
                 } else {
-                    eventParticipants.add(friends[position]);
+                    eventParticipants.add(userFriends.get(position));
                     listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
                     clicked.set(position, true);
                 }
@@ -187,8 +189,13 @@ public class EventCreateActivity extends AppCompatActivity implements
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
                     event.addAll("eventParticipants", eventParticipants);
-                    event.addAll("restaurants", Restaurants);
+                    event.addAll("restaurants", restaurants);
 
+                    for (int i = 0; i < 5; i++) {
+                        votes.add(0);
+                    }
+
+                    event.addAll("votes", votes);
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -206,7 +213,8 @@ public class EventCreateActivity extends AppCompatActivity implements
                                                 public void done(ParseException e) {
                                                     if (e == null) {
                                                         Intent intent = new Intent(EventCreateActivity.this,
-                                                                MainActivity.class);
+                                                                EventVoteActivity.class);
+                                                        intent.putExtra("eventName", nameOfEvent);
                                                         startActivity(intent);
                                                         finish();
                                                     }
@@ -235,7 +243,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuspended(int x) {
-        Log.println(Log.ERROR, "MAIN:", "Connection Suspended");
+        Log.println(Log.ERROR, "EventCreateActivity: ", "Connection Suspended");
 
         Toast.makeText(getApplicationContext(), "Connection Suspended.", Toast.LENGTH_SHORT).show();
     }
@@ -243,7 +251,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult c) {
-        Log.println(Log.ERROR, "MAIN:", "Connection Failed");
+        Log.println(Log.ERROR, "EventCreateActivity: ", "Connection Failed");
 
         Toast.makeText(getApplicationContext(), "Connection Failed.", Toast.LENGTH_SHORT).show();
     }
@@ -259,34 +267,18 @@ public class EventCreateActivity extends AppCompatActivity implements
             // Get the return from the API call.
             Ret = Y.execute(Location).get();
         } catch (Exception e) {
-            System.out.print("Hi");
+            System.out.print("EventCreateActivity: Caught Exception - setUpAPIRet().");
         }
 
-        Log.println(Log.ERROR, "MAIN:", "result = " + Ret);
+        Log.println(Log.ERROR, "EventCreateActivity: ", "result = " + Ret);
         return Ret;
     }
 
 
     public void ParseAndDisplayRestaurantOutput(final String YelpJSON) {
-
-
-        //ParseQuery<ParseObject> event = ParseQuery.getQuery("Event");
-        //event.whereEqualTo("eventName", getIntent().getExtras().getString("EventName"));
-
-        /*try{
-
-            event.getFirst().addAll("restaurants", Restaurants);
-        }
-        catch(com.parse.ParseException e){
-
-        }*/
-        //event.findInBackground(new FindCallback<ParseObject>() {
-        //@Override
-        //public void done(List<ParseObject> list, com.parse.ParseException e) {
-
-        //if (e == null) {
         JSONParser parser = new JSONParser();
         JSONObject response = null;
+
         try {
             response = (JSONObject) parser.parse(YelpJSON);
         } catch (org.json.simple.parser.ParseException pe) {
@@ -296,7 +288,6 @@ public class EventCreateActivity extends AppCompatActivity implements
         }
 
         // Each buisness is now represented as an array entry.
-        Log.println(Log.ERROR, "EventCreate:", "Whereererer" + YelpJSON);
         JSONArray businesses = (JSONArray) response.get("businesses");
 
         // FOR NOW MANUALLY PICK THE 1st 5 RESTAURANTS.
@@ -313,38 +304,16 @@ public class EventCreateActivity extends AppCompatActivity implements
         String R4 = Buisness4.get("name").toString();
         String R5 = Buisness5.get("name").toString();
 
-        //List<String> Restaurants = new ArrayList<>();
-        Restaurants.add(R1);
-        Restaurants.add(R2);
-        Restaurants.add(R3);
-        Restaurants.add(R4);
-        Restaurants.add(R5);
-                    /*try {
-                        Log.println(Log.ERROR, "MAIN:", "In Try");
-                        Log.println(Log.ERROR, "MAIN:", event.getFirst().getString("eventName"));
-                        Log.println(Log.ERROR, "MAIN:", Restaurants.get(0) + Restaurants.get(4));
-
-                        //event.getFirst().setACL(new ParseACL());
-                        event.getFirst().getACL().setPublicWriteAccess(true);
-
-                        //String [] s = {"One", "Two", "Three"};
-
-                        event.getFirst().addAll("restaurants", Restaurants);
-                        event.getFirst().saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(com.parse.ParseException e) {
-                                Log.println(Log.ERROR, "MAIN:", "Done Saving");
-                            }
-                        });
-                    } catch (com.parse.ParseException b) {
-                        Log.println(Log.ERROR, "MAIN:", "Add Restaurants");
-                    }*/
+        // List<String> Restaurants = new ArrayList<>();
+        restaurants.add(R1);
+        restaurants.add(R2);
+        restaurants.add(R3);
+        restaurants.add(R4);
+        restaurants.add(R5);
     }
 
 
-    /*
-     * Method to verify google play services on the device.
-     */
+    // Method to verify google play services on the device.
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
@@ -354,8 +323,7 @@ public class EventCreateActivity extends AppCompatActivity implements
                         1000).show();
             } else {
                 Toast.makeText(getApplicationContext(),
-                        "This device is not supported.", Toast.LENGTH_LONG)
-                        .show();
+                        "This device is not supported.", Toast.LENGTH_LONG).show();
                 finish();
             }
             return false;

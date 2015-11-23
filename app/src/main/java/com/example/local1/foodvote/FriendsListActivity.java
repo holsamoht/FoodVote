@@ -22,7 +22,9 @@ import com.parse.ParseQuery;
 import com.parse.FindCallback;
 import com.parse.SaveCallback;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class FriendsListActivity extends AppCompatActivity {
     EditText enteredInUsername;
     String friendUsername;
     ListView friendsList;
+    List<String> currentFriends = new ArrayList<String>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     String[] noFriends = {"You currently have no friends."};
@@ -43,48 +46,62 @@ public class FriendsListActivity extends AppCompatActivity {
         friendsList = (ListView) findViewById(R.id.friendsList);
 
         enteredInUsername = (EditText) findViewById(R.id.addFriend);
-        Log.println(Log.ERROR, "FriendsListActivity: ", "Before fab - " + enteredInUsername.getText().toString());
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.println(Log.ERROR, "FriendsListActivity: ", "In fab - " + enteredInUsername.getText().toString());
                 friendUsername = enteredInUsername.getText().toString();
-
-                Log.println(Log.ERROR, "FriendsListActivity: ", "In fab - " + friendUsername);
 
                 if (friendUsername.equals("")) {
                     Toast.makeText(getApplicationContext(), "Please enter username.",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
                     query.whereEqualTo("username", friendUsername);
-                    query.getFirstInBackground(new GetCallback<ParseObject>() {
-                        /* TODO
-                         * When trying to search for a user in the database, parseObject is null
-                         * even though the user is in the database. Tried searching for angela, which
-                         * is in the database, and it says that the user does not exist. I'm not too
-                         * sure why, I think it's an issue with the 3 statements above.
-                         */
-                        @Override
-                        public void done(ParseObject parseObject, ParseException e) {
-                            if (parseObject == null) {
+                    query.getFirstInBackground(new GetCallback<ParseUser>() {
+                        public void done(ParseUser object, ParseException e) {
+                            if (object == null) {
                                 Toast.makeText(getApplicationContext(), "User does not exist.",
                                         Toast.LENGTH_LONG).show();
                             } else {
-                                currentUser.getCurrentUser().add("friendsList",
-                                        parseObject.getObjectId());
-                                currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        Intent intent = getIntent();
-                                        overridePendingTransition(0, 0);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                        finish();
-                                        overridePendingTransition(0, 0);
-                                        startActivity(intent);
+                                if (currentUser.getCurrentUser().getList("friendsList") == null) {
+                                    currentUser.getCurrentUser().add("friendsList", object.getObjectId());
+                                    currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            Toast.makeText(getApplicationContext(), "User added.",
+                                                    Toast.LENGTH_LONG).show();
+                                            Intent intent = getIntent();
+                                            overridePendingTransition(0, 0);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                            finish();
+                                            overridePendingTransition(0, 0);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                } else {
+                                    currentFriends = currentUser.getCurrentUser().getList("friendsList");
+                                    if (currentFriends.contains(object.getObjectId())) {
+                                        Toast.makeText(getApplicationContext(), "User is already added.",
+                                                Toast.LENGTH_LONG).show();
+                                    } else {
+                                        currentUser.getCurrentUser().add("friendsList", object.getObjectId());
+                                        currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                Toast.makeText(getApplicationContext(), "User added.",
+                                                        Toast.LENGTH_LONG).show();
+                                                Intent intent = getIntent();
+                                                overridePendingTransition(0, 0);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                                finish();
+                                                overridePendingTransition(0, 0);
+                                                startActivity(intent);
+                                            }
+                                        });
                                     }
-                                });
+                                }
                             }
                         }
                     });
@@ -102,18 +119,15 @@ public class FriendsListActivity extends AppCompatActivity {
         });
 
         try {
-            // friendsList = (ListView) findViewById(R.id.friendsList);
-
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
             for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
                 userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
             }
 
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, userFriends);
             friendsList.setAdapter(adapter);
-
         } catch(NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
             friendsList = (ListView) findViewById(R.id.friendsList);
@@ -125,3 +139,4 @@ public class FriendsListActivity extends AppCompatActivity {
         }
     }
 }
+
