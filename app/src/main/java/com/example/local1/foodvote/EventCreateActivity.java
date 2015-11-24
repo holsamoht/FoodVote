@@ -125,16 +125,22 @@ public class EventCreateActivity extends AppCompatActivity implements
 
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
-            for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
-            }
+            if (userFriendIDs.size() == 0) {
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
+                listFriends = (ListView) findViewById(R.id.friendsList);
+                listFriends.setAdapter(adapter);
+            } else {
+                for (int i = 0; i < userFriendIDs.size(); i++) {
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
+                }
 
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, userFriends);
-            listFriends.setAdapter(adapter);
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, userFriends);
+                listFriends.setAdapter(adapter);
 
-            for (int i = 0; i < userFriends.size(); i++) {
-                clicked.add(false);
+                for (int i = 0; i < userFriendIDs.size(); i++) {
+                    clicked.add(false);
+                }
             }
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
@@ -158,18 +164,18 @@ public class EventCreateActivity extends AppCompatActivity implements
         listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (userFriends.size() == 0) {
+                if (userFriendIDs.size() == 0) {
                     Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
                     startActivity(intent);
                     finish();
                 }
 
                 if (clicked.get(position) == true) {
-                    eventParticipants.remove(userFriends.get(position));
+                    eventParticipants.remove(userFriendIDs.get(position));
                     listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
                     clicked.set(position, false);
                 } else {
-                    eventParticipants.add(userFriends.get(position));
+                    eventParticipants.add(userFriendIDs.get(position));
                     listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
                     clicked.set(position, true);
                 }
@@ -191,10 +197,18 @@ public class EventCreateActivity extends AppCompatActivity implements
                     event.addAll("eventParticipants", eventParticipants);
                     event.addAll("restaurants", restaurants);
 
+                    for (int i = 0; i < eventParticipants.size(); i++) {
+                        ParseObject request = new ParseObject("EventRequest");
+                        request.put("requestFrom", currentUser.getCurrentUser().getObjectId());
+                        request.put("requestTo", eventParticipants.get(i));
+                        request.put("status", "pending");
+                        request.put("eventName", nameOfEvent);
+                        request.saveInBackground();
+                    }
+
                     for (int i = 0; i < 5; i++) {
                         votes.add(0);
                     }
-
                     event.addAll("votes", votes);
                     event.saveInBackground(new SaveCallback() {
                         @Override

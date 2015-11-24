@@ -121,13 +121,19 @@ public class FriendsListActivity extends AppCompatActivity {
         try {
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
-            for (int i = 0; i < userFriendIDs.size(); i++) {
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
-            }
+            if (userFriendIDs.size() == 0) {
+                ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
+                friendsList = (ListView) findViewById(R.id.friendsList);
+                friendsList.setAdapter(adapter);
+            } else {
+                for (int i = 0; i < userFriendIDs.size(); i++) {
+                    ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
+                }
 
-            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, userFriends);
-            friendsList.setAdapter(adapter);
+                ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, userFriends);
+                friendsList.setAdapter(adapter);
+            }
         } catch(NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_friends, noFriends);
             friendsList = (ListView) findViewById(R.id.friendsList);

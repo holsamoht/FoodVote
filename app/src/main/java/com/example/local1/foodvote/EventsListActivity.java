@@ -21,6 +21,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import java.lang.reflect.Array;
@@ -30,7 +31,6 @@ import android.widget.ArrayAdapter;
 
 public class EventsListActivity extends AppCompatActivity {
     Button addButton;
-    Button removeButton;
     ListView listEvents;
     ParseUser currentUser;
     List<String> userEventIDs = new ArrayList<String>();
@@ -48,14 +48,20 @@ public class EventsListActivity extends AppCompatActivity {
         try {
             userEventIDs = currentUser.getCurrentUser().getList("eventsList");
 
-            for (int i = 0; i < userEventIDs.size(); i++) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
-            }
+            if (userEventIDs.size() == 0) {
+                ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
+                ListView listEvents = (ListView) findViewById(R.id.eventsList);
+                listEvents.setAdapter(adapter);
+            } else {
+                for (int i = 0; i < userEventIDs.size(); i++) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                    userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
+                }
 
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
-            ListView listEvents = (ListView) findViewById(R.id.eventsList);
-            listEvents.setAdapter(adapter);
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
+                ListView listEvents = (ListView) findViewById(R.id.eventsList);
+                listEvents.setAdapter(adapter);
+            }
         } catch (NullPointerException e) {
             ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
             ListView listEvents = (ListView) findViewById(R.id.eventsList);
@@ -69,10 +75,52 @@ public class EventsListActivity extends AppCompatActivity {
         listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(EventsListActivity.this, EventVoteActivity.class);
-                intent.putExtra("eventName", userEvents.get(position));
-                startActivity(intent);
-                finish();
+                if (userEventIDs.size() > 0) {
+                    Intent intent = new Intent(EventsListActivity.this, EventVoteActivity.class);
+                    intent.putExtra("eventName", userEvents.get(position));
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
+
+        listEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (userEventIDs.size() > 0) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                    query.whereEqualTo("objectId", userEventIDs.get(position));
+                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject parseObject, ParseException e) {
+                            if (parseObject == null) {
+                                Log.println(Log.ERROR, "EventsListActivity: ", "Unable to find event.");
+                            } else {
+                                parseObject.deleteInBackground();
+                            }
+                        }
+                    });
+
+                    List<String> tempList = new ArrayList<String>();
+                    tempList.add(userEventIDs.get(position));
+                    currentUser.getCurrentUser().removeAll("eventsList", tempList);
+                    currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Intent intent = getIntent();
+                                overridePendingTransition(0, 0);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                finish();
+                                overridePendingTransition(0, 0);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    return true;
+                }
+
+                return true;
             }
         });
 
