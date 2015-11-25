@@ -3,6 +3,7 @@ package com.example.local1.foodvote;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -21,6 +23,9 @@ public class LoginSignUpActivity extends Activity {
     EditText username;
     String usernameText;
     String passwordText;
+    int userID = 0;
+    char parser;
+    Boolean noDuplicate = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +90,25 @@ public class LoginSignUpActivity extends Activity {
                     ParseUser user = new ParseUser();
                     user.setUsername(usernameText);
                     user.setPassword(passwordText);
+
+                    for(int i = 0; i < username.length(); i++) {
+                        parser = username.toString().charAt(i);
+                        userID = userID + ((int) parser);
+                    }
+                    userID = userID % 11;
+
+                    while (noDuplicate == false) {
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("userID", userID);
+                        try {
+                            query.getFirst();
+                            userID = userID + 1;
+                        } catch (ParseException e) {
+                            noDuplicate = true;
+                        }
+                    }
+
+                    user.put("userID", userID);
                     user.signUpInBackground(new SignUpCallback() {
                         public void done(ParseException e) {
                             if (e == null) {

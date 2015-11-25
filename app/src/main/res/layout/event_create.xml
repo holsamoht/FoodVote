@@ -61,9 +61,9 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/cancelButton"
-        android:layout_marginLeft="39dp"
-        android:layout_marginStart="39dp"
-        android:layout_alignTop="@+id/createButton"
+        android:layout_marginLeft="37dp"
+        android:layout_marginStart="37dp"
+        android:layout_below="@+id/friendsList"
         android:layout_toRightOf="@+id/createButton"
         android:layout_toEndOf="@+id/createButton" />
 
