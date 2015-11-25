@@ -49,27 +49,19 @@ public class EventsListActivity extends AppCompatActivity {
             userEventIDs = currentUser.getCurrentUser().getList("eventsList");
 
             if (userEventIDs.size() == 0) {
-                ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
-                ListView listEvents = (ListView) findViewById(R.id.eventsList);
-                listEvents.setAdapter(adapter);
+                createEventsList(false);
             } else {
                 for (int i = 0; i < userEventIDs.size(); i++) {
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                     userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
                 }
 
-                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
-                ListView listEvents = (ListView) findViewById(R.id.eventsList);
-                listEvents.setAdapter(adapter);
+                createEventsList(true);
             }
         } catch (NullPointerException e) {
-            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
-            ListView listEvents = (ListView) findViewById(R.id.eventsList);
-            listEvents.setAdapter(adapter);
+            createEventsList(false);
         } catch (ParseException e) {
-            ArrayAdapter adapter = new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
-            ListView listEvents = (ListView) findViewById(R.id.eventsList);
-            listEvents.setAdapter(adapter);
+            createEventsList(false);
         }
 
         listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -134,5 +126,16 @@ public class EventsListActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    /* helper method to create adapter and list of events
+       hasEvents is true if we can list the user's current events, and false if no events were found
+     */
+    private void createEventsList(boolean hasEvents) {
+        ArrayAdapter adapter = hasEvents ? new ArrayAdapter<String> (this, R.layout.listview_events, userEvents) :
+                new ArrayAdapter<String> (this, R.layout.listview_events, noEvents);
+
+        ListView listEvents = (ListView) findViewById(R.id.eventsList);
+        listEvents.setAdapter(adapter);
     }
 }
