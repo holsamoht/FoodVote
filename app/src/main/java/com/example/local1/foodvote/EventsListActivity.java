@@ -107,7 +107,6 @@ public class EventsListActivity extends AppCompatActivity {
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                     userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
                 }
-
                 // Display event names.
                 ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_events, userEvents);
                 listEvents.setAdapter(adapter);
