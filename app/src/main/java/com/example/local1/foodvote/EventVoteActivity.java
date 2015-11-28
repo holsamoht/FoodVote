@@ -3,7 +3,10 @@ package com.example.local1.foodvote;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,8 +33,9 @@ public class EventVoteActivity extends AppCompatActivity {
     List<ParseObject> tempList = new ArrayList<ParseObject>();
 
     // Widgets
-    Button b1, b2, b3, b4, b5, logout;
+    Button b1, b2, b3, b4, b5;
     TextView c1, c2, c3, c4, c5;
+    Toolbar toolbar;
 
     // TAG
     private static final String TAG = "EventVoteActivity ";
@@ -52,7 +56,6 @@ public class EventVoteActivity extends AppCompatActivity {
         listEventVotes();
         listEventRestaurants();
         restaurantClicked();
-        logout();
     }
 
     @Override
@@ -64,6 +67,28 @@ public class EventVoteActivity extends AppCompatActivity {
         Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            ParseUser.getCurrentUser().logOut();
+            Intent intent = new Intent(EventVoteActivity.this, LoginSignUpActivity.class);
+            startActivity(intent);
+            finish();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeView() {
@@ -81,13 +106,15 @@ public class EventVoteActivity extends AppCompatActivity {
         b3 = (Button) findViewById(R.id.button3);
         b4 = (Button) findViewById(R.id.button4);
         b5 = (Button) findViewById(R.id.button5);
-        logout = (Button) findViewById(R.id.logOutButton);
 
         c1 = (TextView) findViewById(R.id.count1);
         c2 = (TextView) findViewById(R.id.count2);
         c3 = (TextView) findViewById(R.id.count3);
         c4 = (TextView) findViewById(R.id.count4);
         c5 = (TextView) findViewById(R.id.count5);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         query.whereEqualTo("objectId", eventId);
@@ -654,24 +681,4 @@ public class EventVoteActivity extends AppCompatActivity {
         });
     }
     */
-
-    private void logout() {
-        // logout button click listener.
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Logout current user.
-                ParseUser.logOut();
-
-                // After logout, switch to LoginSignUpActivity.
-                Intent intent = new Intent(EventVoteActivity.this,
-                        LoginSignUpActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                Toast.makeText(getApplicationContext(), "Successfully logged out.",
-                        Toast.LENGTH_LONG).show();
-                finish();
-            }
-        });
-    }
 }

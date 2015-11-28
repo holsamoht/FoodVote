@@ -3,7 +3,10 @@ package com.example.local1.foodvote;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -37,6 +40,7 @@ public class EventsListActivity extends AppCompatActivity {
     ListView listEvents;
     ListView listRequests;
     Button addButton;
+    Toolbar toolbar;
 
     // User
     ParseUser currentUser;
@@ -77,6 +81,28 @@ public class EventsListActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            ParseUser.getCurrentUser().logOut();
+            Intent intent = new Intent(EventsListActivity.this, LoginSignUpActivity.class);
+            startActivity(intent);
+            finish();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initializeView() {
         Log.e(TAG, "In initializeData().");
 
@@ -89,6 +115,9 @@ public class EventsListActivity extends AppCompatActivity {
 
         // Locate Button in events_list.xml
         addButton = (Button) findViewById(R.id.addEvent);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void listUserEvents() {

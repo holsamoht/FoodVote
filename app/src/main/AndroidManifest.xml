@@ -3,7 +3,7 @@
     package="com.example.local1.foodvote">
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="21"
         android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,7 +32,7 @@
         <activity android:name=".EventsListActivity" />
         <activity android:name=".EventCreateActivity" />
         <activity android:name=".FriendsListActivity" />
-        <activity android:name=".EventVoteActivity"></activity>
+        <activity android:name=".EventVoteActivity" />
     </application>
 
 </manifest>
