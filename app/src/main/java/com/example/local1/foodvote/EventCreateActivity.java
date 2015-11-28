@@ -254,8 +254,8 @@ public class EventCreateActivity extends AppCompatActivity implements
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
 
-                    eventParticipants.add(currentUser.getCurrentUser().getObjectId());
                     event.addAll("eventParticipants", eventParticipants);
+                    event.add("eventParticipants", currentUser.getCurrentUser().getObjectId());
 
                     event.addAll("restaurants", restaurants);
 
