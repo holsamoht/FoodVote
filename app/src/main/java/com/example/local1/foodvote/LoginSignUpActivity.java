@@ -18,11 +18,8 @@ import com.parse.SignUpCallback;
 
 public class LoginSignUpActivity extends AppCompatActivity {
     // Variables
-    int userID = 0;
-    char parser;
     String usernameText;
     String passwordText;
-    Boolean noDuplicate = false;
 
     // Widgets
     EditText password;
@@ -116,26 +113,6 @@ public class LoginSignUpActivity extends AppCompatActivity {
                     ParseUser user = new ParseUser();
                     user.setUsername(usernameText);
                     user.setPassword(passwordText);
-
-                    for (int i = 0; i < username.length(); i++) {
-                        parser = username.toString().charAt(i);
-                        userID = userID + ((int) parser);
-                    }
-
-                    userID = userID % 11;
-
-                    while (noDuplicate == false) {
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("userID", userID);
-                        try {
-                            query.getFirst();
-                            userID = userID + 1;
-                        } catch (ParseException e) {
-                            noDuplicate = true;
-                        }
-                    }
-
-                    user.put("userID", userID);
                     user.signUpInBackground(new SignUpCallback() {
                         public void done(ParseException e) {
                             if (e == null) {

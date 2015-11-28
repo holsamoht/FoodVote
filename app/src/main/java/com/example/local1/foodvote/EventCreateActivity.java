@@ -49,6 +49,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     List<Boolean> clicked = new ArrayList<Boolean>();
     List<Integer> votes = new ArrayList<Integer>();
+    List<Integer> choiceIndex = new ArrayList<Integer>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     List<String> eventParticipants = new ArrayList<String>();
@@ -263,6 +264,11 @@ public class EventCreateActivity extends AppCompatActivity implements
                         votes.add(0);
                     }
                     event.addAll("votes", votes);
+
+                    for (int i = 0; i < eventParticipants.size() + 1; i++) {
+                        choiceIndex.add(-1);
+                    }
+                    event.addAll("choiceIndex", choiceIndex);
 
                     ParseACL newACL = new ParseACL();
                     newACL.setPublicReadAccess(true);
