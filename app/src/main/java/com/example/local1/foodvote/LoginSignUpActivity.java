@@ -1,8 +1,8 @@
 package com.example.local1.foodvote;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,85 +16,112 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class LoginSignUpActivity extends Activity {
-    Button loginButton;
-    Button signUpButton;
-    EditText password;
-    EditText username;
-    String usernameText;
-    String passwordText;
+public class LoginSignUpActivity extends AppCompatActivity {
+    // Variables
     int userID = 0;
     char parser;
+    String usernameText;
+    String passwordText;
     Boolean noDuplicate = false;
 
-    public void onCreate(Bundle savedInstanceState) {
+    // Widgets
+    EditText password;
+    EditText username;
+    Button loginButton;
+    Button signUpButton;
+
+    // Log TAG
+    private static final String TAG = "LoginSignUpActivity ";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the view from login_sign_up.xml.
+        Log.e(TAG, "In onCreate().");
+
+        initializeView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.e(TAG, "In onStart().");
+
+        login();
+        signUp();
+    }
+
+    private void initializeView() {
+        Log.e(TAG, "In initializeData().");
+
+        // Set the view from login_sign_up.xml.
         setContentView(R.layout.login_sign_up);
 
         // Locate EditTexts in login_sign_up.xml.
-        username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
+        username = (EditText) findViewById(R.id.usernameText);
+        password = (EditText) findViewById(R.id.passwordText);
 
         // Locate Buttons in login_sign_up.xml.
-        loginButton = (Button) findViewById(R.id.login);
-        signUpButton = (Button) findViewById(R.id.signup);
+        loginButton = (Button) findViewById(R.id.loginButton);
+        signUpButton = (Button) findViewById(R.id.signUpButton);
+    }
+
+    private void login() {
+        Log.e(TAG, "In login().");
 
         // Login Button click listener.
         loginButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
+            public void onClick(View v) {
                 // Retrieve the text entered from the EditText.
                 usernameText = username.getText().toString();
                 passwordText = password.getText().toString();
 
                 // Send data to Parse.com for verification.
-                ParseUser.logInInBackground(usernameText, passwordText,
-                        new LogInCallback() {
-                            public void done(ParseUser user, ParseException e) {
-                                if (user != null) {
-                                    // If user exists and authenticated, send user to MainActivity.class.
-                                    Intent intent = new Intent(
-                                            LoginSignUpActivity.this,
-                                            EventsListActivity.class);
-                                    startActivity(intent);
-                                    Toast.makeText(getApplicationContext(),
-                                            "Successfully logged in.",
-                                            Toast.LENGTH_LONG).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(
-                                            getApplicationContext(),
-                                            "No such user exist, please sign-up.",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                ParseUser.logInInBackground(usernameText, passwordText, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        // If user exists and authenticated, send user to EventsListActivity.class.
+                        if (parseUser != null) {
+                            Intent intent = new Intent(LoginSignUpActivity.this,
+                                    EventsListActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "Successfully logged in.",
+                                    Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    "No user exists, please sign-up.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
+    }
+
+    private void signUp() {
+        Log.e(TAG, "In signUp().");
 
         // Sign up Button click listener.
         signUpButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
+            public void onClick(View v) {
                 // Retrieve the text entered from the EditText.
                 usernameText = username.getText().toString();
                 passwordText = password.getText().toString();
 
                 // Force user to fill out the sign up form.
-                if (usernameText.equals("") && passwordText.equals("")) {
-                    Toast.makeText(getApplicationContext(),
-                            "Please complete the sign-up form.",
-                            Toast.LENGTH_LONG).show();
-                } else {
+                if (!(usernameText.equals("")) && !(passwordText.equals(""))) {
                     // Save new user data into Parse.com data storage.
                     ParseUser user = new ParseUser();
                     user.setUsername(usernameText);
                     user.setPassword(passwordText);
 
-                    for(int i = 0; i < username.length(); i++) {
+                    for (int i = 0; i < username.length(); i++) {
                         parser = username.toString().charAt(i);
                         userID = userID + ((int) parser);
                     }
+
                     userID = userID % 11;
 
                     while (noDuplicate == false) {
@@ -112,17 +139,20 @@ public class LoginSignUpActivity extends Activity {
                     user.signUpInBackground(new SignUpCallback() {
                         public void done(ParseException e) {
                             if (e == null) {
-                                // Show a message upon successful registration.
                                 Toast.makeText(getApplicationContext(),
                                         "Successfully signed up, please log in.",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getApplicationContext(),
-                                        "Sign-up error.", Toast.LENGTH_LONG)
-                                        .show();
+                                        "Username taken, please enter a new one.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Please complete the sign-up form.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -26,7 +26,7 @@
         android:layout_alignParentStart="true"
         android:hint="Enter in a username" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+    <android.support.design.widget.FloatingActionButton android:id="@+id/addButton"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@android:drawable/ic_input_add"
@@ -41,7 +41,7 @@
         android:text="Friends List"
         android:id="@+id/friendsListHeader"
         android:layout_marginTop="37dp"
-        android:layout_below="@+id/fab"
+        android:layout_below="@+id/addButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

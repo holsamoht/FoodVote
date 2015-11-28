@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,29 +20,264 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventVoteActivity extends AppCompatActivity {
-
-    int count1, count2, count3, count4, count5 = 0;
-    String nameOfEvent;
-    List<String> restaurantNames = new ArrayList<String>();
+    // Variables
+    int[] count = new int[5];
+    String eventId;
     List<Integer> voteCounts = new ArrayList<Integer>();
+    List<String> restaurantNames = new ArrayList<String>();
     List<ParseObject> tempList = new ArrayList<ParseObject>();
-    Button B1, B2, B3, B4, B5, logout;
-    TextView C1, C2, C3, C4, C5;
-    RelativeLayout switchActivity;
+
+    // Widgets
+    Button b1, b2, b3, b4, b5, logout;
+    TextView c1, c2, c3, c4, c5;
+
+    // TAG
+    private static final String TAG = "EventVoteActivity ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initializeView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.e(TAG, "In onStart().");
+
+        listEventVotes();
+        listEventRestaurants();
+        restaurantClicked();
+        logout();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Log.e(TAG, "In onBackPressed().");
+
+        Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void initializeView() {
+        Log.e(TAG, "In initializeView().");
+
         // Get the view from event_vote.xml.
         setContentView(R.layout.event_vote);
 
         // Get the name of event to query for data.
-        nameOfEvent = getIntent().getExtras().getString("eventName");
+        eventId = getIntent().getExtras().getString("eventId");
 
-        // Locate logout button in event_vote.xml.
-        logout = (Button) findViewById(R.id.logout);
+        // Locate widgets in event_vote.xml
+        b1 = (Button) findViewById(R.id.button1);
+        b2 = (Button) findViewById(R.id.button2);
+        b3 = (Button) findViewById(R.id.button3);
+        b4 = (Button) findViewById(R.id.button4);
+        b5 = (Button) findViewById(R.id.button5);
+        logout = (Button) findViewById(R.id.logOutButton);
 
+        c1 = (TextView) findViewById(R.id.count1);
+        c2 = (TextView) findViewById(R.id.count2);
+        c3 = (TextView) findViewById(R.id.count3);
+        c4 = (TextView) findViewById(R.id.count4);
+        c5 = (TextView) findViewById(R.id.count5);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        query.whereEqualTo("objectId", eventId);
+        try {
+            List<ParseObject> list = query.find();
+
+            voteCounts = list.get(0).getList("votes");
+            restaurantNames = list.get(0).getList("restaurants");
+
+            for (int i = 0; i < voteCounts.size(); i++) {
+                count[i] = voteCounts.get(i);
+            }
+        } catch(ParseException e) {
+            Log.e(TAG, "Unable to find event.");
+        }
+    }
+
+    private void listEventVotes() {
+        Log.e(TAG, "In listEventVotes().");
+
+        c1.setText(String.valueOf(voteCounts.get(0)));
+        c2.setText(String.valueOf(voteCounts.get(1)));
+        c3.setText(String.valueOf(voteCounts.get(2)));
+        c4.setText(String.valueOf(voteCounts.get(3)));
+        c5.setText(String.valueOf(voteCounts.get(4)));
+    }
+
+    private void listEventRestaurants() {
+        Log.e(TAG, "In listEventRestaurants().");
+
+        b1.setText(restaurantNames.get(0));
+        b2.setText(restaurantNames.get(1));
+        b3.setText(restaurantNames.get(2));
+        b4.setText(restaurantNames.get(3));
+        b5.setText(restaurantNames.get(4));
+    }
+
+    public void restaurantClicked() {
+        Log.e(TAG, "In restaurantClicked().");
+
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                query.whereEqualTo("objectId", eventId);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null) {
+                            tempList = list;
+                            tempList.get(0).removeAll("votes", voteCounts);
+                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    count[0]++;
+                                    c1.setText(String.valueOf(count[0]));
+                                    Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                            Toast.LENGTH_SHORT).show();
+                                    voteCounts.remove(0);
+                                    voteCounts.add(0, count[0]);
+                                    tempList.get(0).addAll("votes", voteCounts);
+                                    tempList.get(0).saveInBackground();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                query.whereEqualTo("objectId", eventId);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null) {
+                            tempList = list;
+                            tempList.get(0).removeAll("votes", voteCounts);
+                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    count[1]++;
+                                    c2.setText(String.valueOf(count[1]));
+                                    Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                            Toast.LENGTH_SHORT).show();
+                                    voteCounts.remove(1);
+                                    voteCounts.add(1, count[1]);
+                                    tempList.get(0).addAll("votes", voteCounts);
+                                    tempList.get(0).saveInBackground();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                query.whereEqualTo("objectId", eventId);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null) {
+                            tempList = list;
+                            tempList.get(0).removeAll("votes", voteCounts);
+                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    count[2]++;
+                                    c3.setText(String.valueOf(count[2]));
+                                    Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                            Toast.LENGTH_SHORT).show();
+                                    voteCounts.remove(2);
+                                    voteCounts.add(2, count[2]);
+                                    tempList.get(0).addAll("votes", voteCounts);
+                                    tempList.get(0).saveInBackground();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                query.whereEqualTo("objectId", eventId);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null) {
+                            tempList = list;
+                            tempList.get(0).removeAll("votes", voteCounts);
+                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    count[3]++;
+                                    c4.setText(String.valueOf(count[3]));
+                                    Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                            Toast.LENGTH_SHORT).show();
+                                    voteCounts.remove(3);
+                                    voteCounts.add(3, count[3]);
+                                    tempList.get(0).addAll("votes", voteCounts);
+                                    tempList.get(0).saveInBackground();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        b5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                query.whereEqualTo("objectId", eventId);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null) {
+                            tempList = list;
+                            tempList.get(0).removeAll("votes", voteCounts);
+                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    count[4]++;
+                                    c5.setText(String.valueOf(count[4]));
+                                    Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                            Toast.LENGTH_SHORT).show();
+                                    voteCounts.remove(4);
+                                    voteCounts.add(4, count[4]);
+                                    tempList.get(0).addAll("votes", voteCounts);
+                                    tempList.get(0).saveInBackground();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void logout() {
         // logout button click listener.
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,305 +293,6 @@ public class EventVoteActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Successfully logged out.",
                         Toast.LENGTH_LONG).show();
                 finish();
-            }
-        });
-
-        switchActivity = (RelativeLayout) findViewById(R.id.entireScreen);
-        switchActivity.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this,
-                        EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        /*
-        B1 = (Button) findViewById(R.id.Button1);
-        B1.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventVoteActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        B2 = (Button) findViewById(R.id.Button2);
-        B2.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventVoteActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        B3 = (Button) findViewById(R.id.Button3);
-        B3.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventVoteActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        B4 = (Button) findViewById(R.id.Button4);
-        B4.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventVoteActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        B5 = (Button) findViewById(R.id.Button5);
-        B5.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeLeft() {
-                Intent intent = new Intent(EventVoteActivity.this, EventsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventVoteActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        */
-
-        // Get each view for the restaurant buttons.
-        B1 = (Button)findViewById(R.id.Button1);
-        B2 = (Button)findViewById(R.id.Button2);
-        B3 = (Button)findViewById(R.id.Button3);
-        B4 = (Button)findViewById(R.id.Button4);
-        B5 = (Button)findViewById(R.id.Button5);
-
-        // Get each view for the vote count.
-        C1 = (TextView)findViewById(R.id.textView1);
-        C2 = (TextView)findViewById(R.id.textView2);
-        C3 = (TextView)findViewById(R.id.textView3);
-        C4 = (TextView)findViewById(R.id.textView4);
-        C5 = (TextView)findViewById(R.id.textView5);
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        query.whereEqualTo("eventName", nameOfEvent);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    restaurantNames = list.get(0).getList("restaurants");
-
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                    query.whereEqualTo("eventName", nameOfEvent);
-                    query.findInBackground(new FindCallback<ParseObject>() {
-                        @Override
-                        public void done(List<ParseObject> list, ParseException e) {
-                            if (e == null) {
-                                voteCounts = list.get(0).getList("votes");
-
-                                count1 = voteCounts.get(0);
-                                count2 = voteCounts.get(1);
-                                count3 = voteCounts.get(2);
-                                count4 = voteCounts.get(3);
-                                count5 = voteCounts.get(4);
-
-                                // Set the buttons and text views to the appropriate data.
-                                B1.setText(restaurantNames.get(0));
-                                C1.setText(String.valueOf(voteCounts.get(0)));
-                                B2.setText(restaurantNames.get(1));
-                                C2.setText(String.valueOf(voteCounts.get(1)));
-                                B3.setText(restaurantNames.get(2));
-                                C3.setText(String.valueOf(voteCounts.get(2)));
-                                B4.setText(restaurantNames.get(3));
-                                C4.setText(String.valueOf(voteCounts.get(3)));
-                                B5.setText(restaurantNames.get(4));
-                                C5.setText(String.valueOf(voteCounts.get(4)));
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public void RestaurantClicked(View v){
-        B1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                query.whereEqualTo("eventName", nameOfEvent);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
-                            tempList = list;
-                            tempList.get(0).removeAll("votes", voteCounts);
-                            tempList.get(0).saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    count1++;
-                                    C1.setText(String.valueOf(count1));
-                                    Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
-                                    voteCounts.remove(0);
-                                    voteCounts.add(0, count1);
-                                    tempList.get(0).addAll("votes", voteCounts);
-                                    tempList.get(0).saveInBackground();
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-
-        B2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                query.whereEqualTo("eventName", nameOfEvent);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
-                            tempList = list;
-                            tempList.get(0).removeAll("votes", voteCounts);
-                            tempList.get(0).saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    count2++;
-                                    C2.setText(String.valueOf(count2));
-                                    Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
-                                    voteCounts.remove(1);
-                                    voteCounts.add(1, count2);
-                                    tempList.get(0).addAll("votes", voteCounts);
-                                    tempList.get(0).saveInBackground();
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-
-        B3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                query.whereEqualTo("eventName", nameOfEvent);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
-                            tempList = list;
-                            tempList.get(0).removeAll("votes", voteCounts);
-                            tempList.get(0).saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    count3++;
-                                    C3.setText(String.valueOf(count3));
-                                    Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
-                                    voteCounts.remove(2);
-                                    voteCounts.add(2, count3);
-                                    tempList.get(0).addAll("votes", voteCounts);
-                                    tempList.get(0).saveInBackground();
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-
-        B4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                query.whereEqualTo("eventName", nameOfEvent);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
-                            tempList = list;
-                            tempList.get(0).removeAll("votes", voteCounts);
-                            tempList.get(0).saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    count4++;
-                                    C4.setText(String.valueOf(count4));
-                                    Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
-                                    voteCounts.remove(3);
-                                    voteCounts.add(3, count4);
-                                    tempList.get(0).addAll("votes", voteCounts);
-                                    tempList.get(0).saveInBackground();
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-
-        B5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                query.whereEqualTo("eventName", nameOfEvent);
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null) {
-                            tempList = list;
-                            tempList.get(0).removeAll("votes", voteCounts);
-                            tempList.get(0).saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    count5++;
-                                    C5.setText(String.valueOf(count5));
-                                    Toast.makeText(getApplicationContext(), "Restaurant voted.", Toast.LENGTH_SHORT).show();
-                                    voteCounts.remove(4);
-                                    voteCounts.add(4, count5);
-                                    tempList.get(0).addAll("votes", voteCounts);
-                                    tempList.get(0).saveInBackground();
-                                }
-                            });
-                        }
-                    }
-                });
             }
         });
     }

@@ -2,7 +2,6 @@ package com.example.local1.foodvote;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -21,8 +19,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -34,67 +31,72 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class EventCreateActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    EditText eventName;
-    Button createButton;
-    Button cancelButton;
-    ParseUser currentUser;
+    // Variables
     String nameOfEvent;
-    ListView listFriends;
+    String[] noFriends = {"You currently have no friends."};
+    String mLatitudeText;
+    String mLongitudeText;
+    String eventId;
+
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    YelpAPI yAPI;
+
+    List<Boolean> clicked = new ArrayList<Boolean>();
+    List<Integer> votes = new ArrayList<Integer>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     List<String> eventParticipants = new ArrayList<String>();
-    List<Boolean> clicked = new ArrayList<Boolean>();
-    String[] noFriends = {"You currently have no friends."};
-
     List<String> restaurants = new ArrayList<String>();
-    List<Integer> votes = new ArrayList<Integer>();
 
+    // Widgets
+    Button createButton;
+    Button cancelButton;
+    EditText eventName;
+    ListView listFriends;
+
+    // User
+    ParseUser currentUser;
+
+    // YELP API keys
     private static final String CONSUMER_KEY = "FQFe1MpY3PGvxKy-Aq702g";
     private static final String CONSUMER_SECRET = "u_ifYEaonk6W5sf24SCXiGPKx6I";
     private static final String TOKEN = "6YSX1I448VpE2WQ1rrQv0NJRNJ9E9rOX";
     private static final String TOKEN_SECRET = "_iN4GhZsdgojn1WYZTHOi-q2jzM";
 
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    String mLatitudeText;
-    String mLongitudeText;
-    YelpAPI yAPI;
+    // TAG
+    private static final String TAG = "EventCreateActivity ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.event_create);
 
-        eventName = (EditText) findViewById(R.id.eventName);
+        Log.e(TAG, "In onCreate().");
 
-        createButton = (Button) findViewById(R.id.createButton);
-        cancelButton = (Button) findViewById(R.id.cancelButton);
-
-        if (checkPlayServices()) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+        initializeView();
     }
 
+    @Override
     protected void onStart() {
         super.onStart();
 
-        yAPI = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
-        String location = "";
+        Log.e(TAG, "In onStart().");
+
+        selectUserFriends();
+        createEvent();
+        cancelEvent();
 
         mGoogleApiClient.connect();
     }
 
     public void onConnected(Bundle bundle) {
+        Log.e(TAG, "In onConnected().");
+
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
@@ -116,42 +118,92 @@ public class EventCreateActivity extends AppCompatActivity implements
             mLongitudeText = "-117.2380";
             String location = mLatitudeText + ", " + mLongitudeText;
             String YelpJSON = setUpAPIRet(yAPI, location);
-            ParseAndDisplayRestaurantOutput(YelpJSON);
+            parseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int x) {
+        Log.e(TAG, "In onConnectionSuspended().");
+        Log.e(TAG, "Connection suspended.");
+
+        Toast.makeText(getApplicationContext(), "Connection suspended.", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult c) {
+        Log.e(TAG, "In onConnectionFailed().");
+        Log.e(TAG, "Connection failed.");
+
+        Toast.makeText(getApplicationContext(), "Connection failed.", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void initializeView() {
+        Log.e(TAG, "In initializeView().");
+
+        // Set view from event_create.xml.
+        setContentView(R.layout.event_create);
+
+        // Find widgets from event_create.xml.
+        createButton = (Button) findViewById(R.id.createButton);
+        cancelButton = (Button) findViewById(R.id.cancelButton);
+        eventName = (EditText) findViewById(R.id.eventName);
+        listFriends = (ListView) findViewById(R.id.friendsList);
+
+        // Set yelpAPI keys.
+        yAPI = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+
+        // Build googleAPI client.
+        if (checkPlayServices()) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    private void selectUserFriends() {
+        Log.e(TAG, "In selectUserFriends().");
 
         try {
-            listFriends = (ListView) findViewById(R.id.friendsList);
-
+            // Get a list of user IDs from current user's friends list.
             userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
 
-            if (userFriendIDs.size() == 0) {
-                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
-                listFriends = (ListView) findViewById(R.id.friendsList);
-                listFriends.setAdapter(adapter);
-            } else {
+            // If user IDs were found, convert to usernames else print msg saying no friends.
+            if (userFriendIDs != null) {
+                // Convert the user IDs to usernames and add to another list.
                 for (int i = 0; i < userFriendIDs.size(); i++) {
                     ParseQuery<ParseUser> query = ParseUser.getQuery();
                     userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
                 }
 
+                // Print out current user's friends.
                 ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, userFriends);
                 listFriends.setAdapter(adapter);
 
+                // Set clicked (selected) flag to false.
                 for (int i = 0; i < userFriendIDs.size(); i++) {
                     clicked.add(false);
                 }
+            } else {
+                // Display msg that current user has no friends.
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
+                listFriends.setAdapter(adapter);
             }
         } catch (NullPointerException e) {
+            // Display msg that current user has no friends.
             ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
-            listFriends = (ListView) findViewById(R.id.friendsList);
             listFriends.setAdapter(adapter);
         } catch (ParseException e) {
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
-            listFriends = (ListView) findViewById(R.id.friendsList);
-            listFriends.setAdapter(adapter);
+            Log.e(TAG, "Unable to convert userIDs to usernames.");
         }
 
+        // TODO remove after fragments work.
         listFriends.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
             @Override
             public void onSwipeRight() {
@@ -161,26 +213,32 @@ public class EventCreateActivity extends AppCompatActivity implements
             }
         });
 
+        // On item click, highlight friend and add them to list of event participants.
         listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (userFriendIDs.size() == 0) {
+                if (userFriendIDs != null) {
+                    // If false, highlight friends and add to event, else do the opposite.
+                    if (clicked.get(position) != true) {
+                        eventParticipants.add(userFriendIDs.get(position));
+                        listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        clicked.set(position, true);
+                    } else {
+                        eventParticipants.remove(userFriendIDs.get(position));
+                        listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                        clicked.set(position, false);
+                    }
+                } else {
                     Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
                     startActivity(intent);
                     finish();
                 }
-
-                if (clicked.get(position) == true) {
-                    eventParticipants.remove(userFriendIDs.get(position));
-                    listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                    clicked.set(position, false);
-                } else {
-                    eventParticipants.add(userFriendIDs.get(position));
-                    listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
-                    clicked.set(position, true);
-                }
             }
         });
+    }
+
+    private void createEvent() {
+        Log.e(TAG, "In createEvent().");
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,25 +249,25 @@ public class EventCreateActivity extends AppCompatActivity implements
                     Toast.makeText(getApplicationContext(), "Please enter name of event.",
                             Toast.LENGTH_LONG).show();
                 } else {
+                    // Create the event/set all parameters for the event.
                     ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
-                    event.addAll("eventParticipants", eventParticipants);
-                    event.addAll("restaurants", restaurants);
 
-                    for (int i = 0; i < eventParticipants.size(); i++) {
-                        ParseObject request = new ParseObject("EventRequest");
-                        request.put("requestFrom", currentUser.getCurrentUser().getObjectId());
-                        request.put("requestTo", eventParticipants.get(i));
-                        request.put("status", "pending");
-                        request.put("eventName", nameOfEvent);
-                        request.saveInBackground();
-                    }
+                    eventParticipants.add(currentUser.getCurrentUser().getObjectId());
+                    event.addAll("eventParticipants", eventParticipants);
+
+                    event.addAll("restaurants", restaurants);
 
                     for (int i = 0; i < 5; i++) {
                         votes.add(0);
                     }
                     event.addAll("votes", votes);
+
+                    ParseACL newACL = new ParseACL();
+                    newACL.setPublicReadAccess(true);
+                    newACL.setPublicWriteAccess(true);
+                    event.setACL(newACL);
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -220,15 +278,34 @@ public class EventCreateActivity extends AppCompatActivity implements
                                     @Override
                                     public void done(List<ParseObject> list, ParseException e) {
                                         if (e == null) {
+                                            // Add event to current user.
                                             currentUser.getCurrentUser().add("eventsList",
                                                     list.get(0).getObjectId());
+
+                                            eventId = list.get(0).getObjectId();
+
+                                            // Send a request to each added participant.
+                                            for (int i = 0; i < eventParticipants.size(); i++) {
+                                                ParseObject request = new ParseObject("EventRequest");
+                                                request.put("requestFrom", currentUser.getCurrentUser().getObjectId());
+                                                request.put("requestTo", eventParticipants.get(i));
+                                                request.put("status", "pending");
+                                                request.put("eventId", eventId);
+                                                ParseACL newACL = new ParseACL();
+                                                newACL.setPublicReadAccess(true);
+                                                newACL.setPublicWriteAccess(true);
+                                                // newACL.setWriteAccess(eventParticipants.get(i), true);
+                                                request.setACL(newACL);
+                                                request.saveInBackground();
+                                            }
+
                                             currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
                                                 @Override
                                                 public void done(ParseException e) {
                                                     if (e == null) {
                                                         Intent intent = new Intent(EventCreateActivity.this,
                                                                 EventVoteActivity.class);
-                                                        intent.putExtra("eventName", nameOfEvent);
+                                                        intent.putExtra("eventId", eventId);
                                                         startActivity(intent);
                                                         finish();
                                                     }
@@ -243,6 +320,10 @@ public class EventCreateActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    private void cancelEvent() {
+        Log.e(TAG, "In cancelEvent().");
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,69 +335,50 @@ public class EventCreateActivity extends AppCompatActivity implements
         });
     }
 
-
-    @Override
-    public void onConnectionSuspended(int x) {
-        Log.println(Log.ERROR, "EventCreateActivity: ", "Connection Suspended");
-
-        Toast.makeText(getApplicationContext(), "Connection Suspended.", Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onConnectionFailed(ConnectionResult c) {
-        Log.println(Log.ERROR, "EventCreateActivity: ", "Connection Failed");
-
-        Toast.makeText(getApplicationContext(), "Connection Failed.", Toast.LENGTH_SHORT).show();
-    }
-
-    /*
-     * Method gets the API call in JSON format.
-     */
-    public String setUpAPIRet(YelpAPI Y, String Location) {
+    // Method gets the API call in JSON format.
+    public String setUpAPIRet(YelpAPI yelp, String location) {
         // To return.
-        String Ret = "";
+        String ret = "";
 
         try {
             // Get the return from the API call.
-            Ret = Y.execute(Location).get();
+            ret = yelp.execute(location).get();
         } catch (Exception e) {
-            System.out.print("EventCreateActivity: Caught Exception - setUpAPIRet().");
+            Log.e(TAG, "Caught exception - setUpAPIRet().");
         }
 
-        Log.println(Log.ERROR, "EventCreateActivity: ", "result = " + Ret);
-        return Ret;
+        Log.e(TAG, "Result = " + ret);
+        return ret;
     }
 
 
-    public void ParseAndDisplayRestaurantOutput(final String YelpJSON) {
+    public void parseAndDisplayRestaurantOutput(final String yelpJSON) {
         JSONParser parser = new JSONParser();
         JSONObject response = null;
 
         try {
-            response = (JSONObject) parser.parse(YelpJSON);
-        } catch (org.json.simple.parser.ParseException pe) {
-            System.out.println("Error: could not parse JSON response:");
-            System.out.println(YelpJSON);
+            response = (JSONObject) parser.parse(yelpJSON);
+        } catch (org.json.simple.parser.ParseException e) {
+            Log.e(TAG, "Error - Could not parse JSON response" + yelpJSON);
             System.exit(1);
         }
 
-        // Each buisness is now represented as an array entry.
+        // Each business is now represented as an array entry.
         JSONArray businesses = (JSONArray) response.get("businesses");
 
-        // FOR NOW MANUALLY PICK THE 1st 5 RESTAURANTS.
-        JSONObject Buisness1 = (JSONObject) businesses.get(0);
-        JSONObject Buisness2 = (JSONObject) businesses.get(1);
-        JSONObject Buisness3 = (JSONObject) businesses.get(2);
-        JSONObject Buisness4 = (JSONObject) businesses.get(3);
-        JSONObject Buisness5 = (JSONObject) businesses.get(4);
+        // For now, manually pick the first 5 restaurants.
+        JSONObject business1 = (JSONObject) businesses.get(0);
+        JSONObject business2 = (JSONObject) businesses.get(1);
+        JSONObject business3 = (JSONObject) businesses.get(2);
+        JSONObject business4 = (JSONObject) businesses.get(3);
+        JSONObject business5 = (JSONObject) businesses.get(4);
 
-        // GET THE NAME OF EACH RESTAURANT.
-        String R1 = Buisness1.get("name").toString();
-        String R2 = Buisness2.get("name").toString();
-        String R3 = Buisness3.get("name").toString();
-        String R4 = Buisness4.get("name").toString();
-        String R5 = Buisness5.get("name").toString();
+        // Get the name of each restaurant.
+        String R1 = business1.get("name").toString();
+        String R2 = business2.get("name").toString();
+        String R3 = business3.get("name").toString();
+        String R4 = business4.get("name").toString();
+        String R5 = business5.get("name").toString();
 
         // List<String> Restaurants = new ArrayList<>();
         restaurants.add(R1);
@@ -331,6 +393,7 @@ public class EventCreateActivity extends AppCompatActivity implements
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
+
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
@@ -340,8 +403,10 @@ public class EventCreateActivity extends AppCompatActivity implements
                         "This device is not supported.", Toast.LENGTH_LONG).show();
                 finish();
             }
+
             return false;
         }
+
         return true;
     }
 }
