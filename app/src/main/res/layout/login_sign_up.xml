@@ -9,41 +9,58 @@
         android:id="@+id/usernameHeader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Username" />
+        android:text="@string/Username"
+        android:layout_marginTop="43dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
         android:layout_below="@+id/usernameHeader"
-        android:inputType="text" />
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/passwordHeader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="@string/Password"
         android:layout_below="@+id/usernameText"
-        android:text="@string/Password" />
+        android:layout_alignParentLeft="true" />
 
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:inputType="textPassword"
         android:layout_below="@+id/passwordHeader"
-        android:inputType="textPassword" />
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/loginButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="@string/LoginButton"
         android:layout_below="@+id/passwordText"
-        android:text="@string/LoginButton" />
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="@string/SignUpButton"
         android:layout_below="@+id/loginButton"
-        android:text="@string/SignUpButton" />
+        android:layout_alignParentLeft="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>

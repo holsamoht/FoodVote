@@ -1,6 +1,7 @@
 package com.example.local1.foodvote;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
@@ -35,6 +37,9 @@ public class LoginSignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.e(TAG, "In onCreate().");
+
+        //ImageView mImageView = (ImageView) findViewById(R.id.imageView);
+        //mImageView.setImageResource(R.drawable.logo);
 
         initializeView();
     }
