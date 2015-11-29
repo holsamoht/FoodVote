@@ -81,7 +81,7 @@ public class LoginSignUpActivity extends AppCompatActivity {
                         // If user exists and authenticated, send user to EventsListActivity.class.
                         if (parseUser != null) {
                             Intent intent = new Intent(LoginSignUpActivity.this,
-                                    EventsListActivity.class);
+                                    MainActivity.class);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "Successfully logged in.",
                                     Toast.LENGTH_SHORT).show();

@@ -68,6 +68,9 @@ public class EventCreateActivity extends AppCompatActivity implements
     // User
     ParseUser currentUser;
 
+    //RunVariable
+    boolean isSetUp = false;
+
     // YELP API keys
     private static final String CONSUMER_KEY = "FQFe1MpY3PGvxKy-Aq702g";
     private static final String CONSUMER_SECRET = "u_ifYEaonk6W5sf24SCXiGPKx6I";
@@ -92,11 +95,14 @@ public class EventCreateActivity extends AppCompatActivity implements
 
         Log.e(TAG, "In onStart().");
 
-        selectUserFriends();
-        createEvent();
-        cancelEvent();
+        if(isSetUp == false) {
+            selectUserFriends();
+            createEvent();
+            cancelEvent();
 
-        mGoogleApiClient.connect();
+            isSetUp = true;
+            mGoogleApiClient.connect();
+        }
     }
 
     public void onConnected(Bundle bundle) {
@@ -105,27 +111,26 @@ public class EventCreateActivity extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
-        /*
+
         // Use if developing on an android phone.
         if (mLastLocation != null) {
             mLatitudeText = String.valueOf(mLastLocation.getLatitude());
             mLongitudeText = String.valueOf(mLastLocation.getLongitude());
             String location = mLatitudeText + ", " + mLongitudeText;
             String YelpJSON = setUpAPIRet(yAPI, location);
-            ParseAndDisplayRestaurantOutput(YelpJSON);
+            parseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
-        */
 
         // Use if developing on an emulator.
-        if (mLastLocation == null) {
+        /*if (mLastLocation == null) {
             mLatitudeText = "32.8810";
             mLongitudeText = "-117.2380";
             String location = mLatitudeText + ", " + mLongitudeText;
             String YelpJSON = setUpAPIRet(yAPI, location);
             parseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
-        }
+        }*/
     }
 
     @Override
@@ -150,7 +155,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
         Log.e(TAG, "In onBackPressed");
 
-        Intent intent = new Intent(EventCreateActivity.this, EventsListActivity.class);
+        Intent intent = new Intent(EventCreateActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
@@ -296,7 +301,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
                     event.addAll("restaurants", restaurants);
 
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 10; i++) {
                         votes.add(0);
                     }
                     event.addAll("votes", votes);
@@ -370,7 +375,7 @@ public class EventCreateActivity extends AppCompatActivity implements
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EventCreateActivity.this, EventsListActivity.class);
+                Intent intent = new Intent(EventCreateActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -414,6 +419,11 @@ public class EventCreateActivity extends AppCompatActivity implements
         JSONObject business3 = (JSONObject) businesses.get(2);
         JSONObject business4 = (JSONObject) businesses.get(3);
         JSONObject business5 = (JSONObject) businesses.get(4);
+        JSONObject business6 = (JSONObject) businesses.get(5);
+        JSONObject business7 = (JSONObject) businesses.get(6);
+        JSONObject business8 = (JSONObject) businesses.get(7);
+        JSONObject business9 = (JSONObject) businesses.get(8);
+        JSONObject business10 = (JSONObject) businesses.get(9);
 
         // Get the name of each restaurant.
         String R1 = business1.get("name").toString();
@@ -421,6 +431,11 @@ public class EventCreateActivity extends AppCompatActivity implements
         String R3 = business3.get("name").toString();
         String R4 = business4.get("name").toString();
         String R5 = business5.get("name").toString();
+        String R6 = business6.get("name").toString();
+        String R7 = business7.get("name").toString();
+        String R8 = business8.get("name").toString();
+        String R9 = business9.get("name").toString();
+        String R10 = business10.get("name").toString();
 
         // List<String> Restaurants = new ArrayList<>();
         restaurants.add(R1);
@@ -428,6 +443,11 @@ public class EventCreateActivity extends AppCompatActivity implements
         restaurants.add(R3);
         restaurants.add(R4);
         restaurants.add(R5);
+        restaurants.add(R6);
+        restaurants.add(R7);
+        restaurants.add(R8);
+        restaurants.add(R9);
+        restaurants.add(R10);
     }
 
 

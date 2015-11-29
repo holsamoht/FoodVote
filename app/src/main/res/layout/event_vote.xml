@@ -116,6 +116,81 @@
             android:textAlignment="textStart"
             android:gravity="start" />
 
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="325dip"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:id="@+id/button6"
+            android:text=""
+            android:onClick="restaurantClicked"
+            android:layout_below="@+id/button5"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textStart"
+            android:gravity="start" />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="325dip"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:id="@+id/button7"
+            android:text=""
+            android:onClick="restaurantClicked"
+            android:layout_below="@+id/button6"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textStart"
+            android:gravity="start" />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="325dip"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:id="@+id/button8"
+            android:text=""
+            android:onClick="restaurantClicked"
+            android:layout_below="@+id/button7"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textStart"
+            android:gravity="start" />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="325dip"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:id="@+id/button9"
+            android:text=""
+            android:onClick="restaurantClicked"
+            android:layout_below="@+id/button8"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textStart"
+            android:gravity="start" />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="325dip"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:id="@+id/button10"
+            android:text=""
+            android:onClick="restaurantClicked"
+            android:layout_below="@+id/button9"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textStart"
+            android:gravity="start" />
+
         <TextView
             android:layout_width="50dip"
             android:layout_height="50dip"
@@ -173,6 +248,67 @@
             android:layout_toLeftOf="@+id/button5"
             android:layout_toStartOf="@+id/button5"
             android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/count6"
+            android:layout_below="@+id/button5"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button6"
+            android:layout_toStartOf="@+id/button6"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/count7"
+            android:layout_below="@+id/button6"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button7"
+            android:layout_toStartOf="@+id/button7"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/count8"
+            android:layout_below="@+id/button7"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button8"
+            android:layout_toStartOf="@+id/button8"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/count9"
+            android:layout_below="@+id/button8"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button9"
+            android:layout_toStartOf="@+id/button9"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/count10"
+            android:layout_below="@+id/button9"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button10"
+            android:layout_toStartOf="@+id/button10"
+            android:textAlignment="center" />
+
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
