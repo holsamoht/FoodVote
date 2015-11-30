@@ -49,13 +49,6 @@ public class FriendsListFrag extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    /**
-     * TODO Comment
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +74,7 @@ public class FriendsListFrag extends Fragment {
 
     /**
      *  Add friend when button is clicked.
+     *  Called from onStart()
      */
     private void addFriend() {
         addFriendButton.setOnClickListener(new View.OnClickListener() {
@@ -88,31 +82,41 @@ public class FriendsListFrag extends Fragment {
             public void onClick(View view) {
                 friendUsername = enteredInUsername.getText().toString();
 
+                // if they tried to search for an empty username, prompt the user to enter a username 
                 if (friendUsername.equals("") ||
                         friendUsername.equals(ParseUser.getCurrentUser().getUsername())) {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Please enter a different username.",
                             Toast.LENGTH_LONG).show();
-                } else {
+                }
+                // otherwise search for a user who matches the entered username
+                else {
+                    // usernames should all be unique, so we will only look for the first matching
+                    // user since that should be the only matching user
                     ParseQuery<ParseUser> query = ParseUser.getQuery();
                     query.whereEqualTo("username", friendUsername);
                     query.getFirstInBackground(new GetCallback<ParseUser>() {
                         public void done(ParseUser parseObject, ParseException e) {
+                            // show a toast if no matching user could be found
                             if (parseObject == null) {
                                 Toast.makeText(getActivity().getApplicationContext(),
                                         "User does not exist.",
                                         Toast.LENGTH_LONG).show();
                             } else {
+                                // initialize a new friendsList if the current user doesn't have one
                                 if (ParseUser.getCurrentUser().getList("friendsList") == null) {
                                     ParseUser.getCurrentUser().add("friendsList",
                                             parseObject.getObjectId());
                                     ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+
                                         @Override
                                         public void done(ParseException e) {
+                                            // display a toast once the newly initialized friendlist is saved
                                             Toast.makeText(getActivity().getApplicationContext(),
                                                     "User added.",
                                                     Toast.LENGTH_LONG).show();
 
+                                            // refresh the activity
                                             Intent intent = getActivity().getIntent();
                                             getActivity().overridePendingTransition(0, 0);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -121,25 +125,32 @@ public class FriendsListFrag extends Fragment {
                                             startActivity(intent);
                                         }
                                     });
-                                } else {
+                                } 
+                                else {
                                     currentFriends =
                                             ParseUser.getCurrentUser().getList("friendsList");
 
+                                    // if the matching user is already a friend, show a toast and do 
+                                    // nothing else
                                     if (currentFriends.contains(parseObject.getObjectId())) {
                                         Toast.makeText(getActivity().getApplicationContext(),
                                                 "User is already added.",
                                                 Toast.LENGTH_LONG).show();
-                                    } else {
+                                    } 
+                                    // otherwise append to the existing friendsList
+                                    else {
                                         ParseUser.getCurrentUser().add("friendsList",
                                                 parseObject.getObjectId());
                                         ParseUser.getCurrentUser().saveInBackground(
                                                 new SaveCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
+                                                        // display a toast once the new data is saved
                                                         Toast.makeText(getActivity().getApplicationContext(),
                                                                 "User added.",
                                                                 Toast.LENGTH_LONG).show();
 
+                                                        // refresh the activity
                                                         Intent intent = getActivity().getIntent();
                                                         getActivity().overridePendingTransition(0, 0);
                                                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -162,16 +173,21 @@ public class FriendsListFrag extends Fragment {
         friendsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // protective check in case the user has no friends
+                // this should never execute because if the user has no friends, there would have been
+                // nothing to long click on
                 if (userFriendIDs == null) {
                     Toast.makeText(getActivity().getApplicationContext(), "No friend to delete",
                             Toast.LENGTH_SHORT).show();
                 } else {
+                    // remove the friend's id from the current user's friendsList and save
                     pos = position;
 
                     List<String> tempList = new ArrayList<String>();
                     tempList.add(userFriendIDs.get(pos));
                     ParseUser.getCurrentUser().removeAll("friendsList", tempList);
                     ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                        // once save completes, refresh the activity
                         @Override
                         public void done(ParseException e) {
                             Intent intent = getActivity().getIntent();
@@ -193,21 +209,25 @@ public class FriendsListFrag extends Fragment {
         try {
             userFriendIDs = ParseUser.getCurrentUser().getList("friendsList");
 
+            // display the noFriends message if the user has no friends
             if (userFriendIDs == null || userFriendIDs.size() == 0) {
                 ArrayAdapter adapter = new ArrayAdapter<String> (getActivity(),
                         R.layout.listview_friends, noFriends);
                 friendsList.setAdapter(adapter);
             } else {
+                // get the list of names of the user's friends
                 for (int i = 0; i < userFriendIDs.size(); i++) {
                     ParseQuery<ParseUser> query = ParseUser.getQuery();
                     userFriends.add(query.get(userFriendIDs.get(i)).getString("username"));
                 }
 
+                // display the names of the user's friends
                 ArrayAdapter adapter = new ArrayAdapter<String> (getActivity(),
                         R.layout.listview_friends, userFriends);
                 friendsList.setAdapter(adapter);
             }
         } catch(NullPointerException e) {
+            // NullPointerException catch simply displays noFriends message to user
             ArrayAdapter adapter = new ArrayAdapter<String> (getActivity(),
                     R.layout.listview_friends, noFriends);
             friendsList.setAdapter(adapter);
