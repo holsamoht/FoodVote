@@ -26,36 +26,40 @@
     </android.support.design.widget.AppBarLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/restaurantName"
         android:hint="Name of Restaurant"
         android:textColor="#030000"
         android:textSize="40dp"
+        android:inputType="none"
+        android:layout_marginTop="45dp"
         android:layout_below="@+id/view"
-        android:layout_alignStart="@+id/view"
-        android:layout_marginTop="58dp"
-        android:inputType="none" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:id="@+id/rating"
         android:hint="rating"
-        android:layout_above="@+id/type"
-        android:layout_alignStart="@+id/type"
         android:textColor="#010000"
-        android:inputType="none" />
+        android:inputType="none"
+        android:textSize="25dp"
+        android:layout_below="@+id/restaurantName"
+        android:layout_alignStart="@+id/restaurantName" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/type"
         android:hint="Type of Food"
-        android:layout_centerVertical="true"
         android:textColor="#060000"
-        android:layout_alignStart="@+id/address"
-        android:inputType="none" />
+        android:inputType="none"
+        android:layout_below="@+id/rating"
+        android:layout_alignStart="@+id/rating"
+        android:textSize="25dp"
+        android:layout_toStartOf="@+id/textView3"
+        android:layout_alignEnd="@+id/rating" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,13 +67,19 @@
         android:inputType="textPostalAddress|none"
         android:ems="10"
         android:id="@+id/address"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="123dp"
-        android:layout_alignEnd="@+id/restaurantName"
         android:hint="Address"
         android:textColor="#080000"
-        android:background="@drawable/back" />
+        android:textIsSelectable="true"
+        android:lines="8"
+        android:minLines="6"
+        android:gravity="top|left"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+
+        android:layout_marginTop="85dp"
+        android:layout_below="@+id/type"
+        android:layout_alignStart="@+id/type"
+        android:layout_alignEnd="@+id/restaurantName" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -78,11 +88,21 @@
         android:ems="10"
         android:id="@+id/phone"
         android:hint="Phone"
-        android:layout_alignTop="@+id/address"
-        android:layout_alignStart="@+id/address"
-        android:layout_marginTop="48dp"
         android:textColor="#080000"
-        android:background="@drawable/back"/>
+        android:textIsSelectable="true"
+        android:layout_below="@+id/address"
+        android:layout_alignStart="@+id/address" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stars"
+        android:id="@+id/textView3"
+        android:textIsSelectable="false"
+        android:textSize="25dp"
+        android:layout_above="@+id/type"
+        android:layout_alignEnd="@+id/rating"
+        android:layout_marginEnd="40dp" />
 
 
 </RelativeLayout>
