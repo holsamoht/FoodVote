@@ -14,12 +14,14 @@
 
     <ListView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="415dp"
         android:id="@+id/eventsList"
         android:layout_gravity="left|top"
         android:cacheColorHint="#f3eb0b"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/fab"
+        android:layout_alignStart="@+id/fab" />
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -30,27 +32,25 @@
         android:tint="#FFFFFF"
         app:backgroundTint="#08EBD1"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="35dp" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
-        android:textSize="20dp"
-        android:hint="Click me to create a new Event!"
         android:layout_alignTop="@+id/fab"
-        android:layout_toEndOf="@+id/fab" />
+        android:layout_toEndOf="@+id/fab"
+        android:textSize="20dp"
+        android:hint="Click me to create a new Event!" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your Events"
         android:id="@+id/textView2"
+        android:layout_above="@+id/eventsList"
+        android:layout_alignStart="@+id/eventsList"
         android:textSize="25dp"
-        android:textColor="#080000"
-        android:layout_marginTop="35dp"
-        android:layout_below="@+id/fab"
-        android:layout_alignParentStart="true" />
+        android:textColor="#080000" />
 
 </RelativeLayout>

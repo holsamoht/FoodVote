@@ -56,6 +56,8 @@ public class FragmentContainer extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
+        ParseUser.getCurrentUser().logOut();
+
         Intent intent = new Intent(FragmentContainer.this, LoginSignUpActivity.class);
         startActivity(intent);
         finish();
