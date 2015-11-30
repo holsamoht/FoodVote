@@ -282,7 +282,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                         clicked.set(position, false);
                     } else {
                         eventParticipants.add(userFriendIDs.get(position));
-                        listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        listFriends.getChildAt(position).setBackgroundColor(0xffecfeea);
                         clicked.set(position, true);
                     }
                 }

@@ -40,7 +40,10 @@
         android:hint="e.g. event name"
         android:layout_below="@+id/view"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:singleLine="true"
+        android:nextFocusDown="@+id/typeOfBusiness"
+        android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -49,7 +52,10 @@
         android:layout_below="@+id/eventName"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:hint="e.g. restaurants, japanese, mexican, etc" />
+        android:hint="e.g. restaurants, japanese, mexican, etc"
+        android:singleLine="true"
+        android:nextFocusDown="@+id/location"
+        android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -58,7 +64,9 @@
         android:layout_below="@+id/typeOfBusiness"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:text="Current Location" />
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:hint="e.g. Current Location" />
 
     <TextView
         android:layout_width="wrap_content"

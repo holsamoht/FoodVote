@@ -34,7 +34,8 @@
         android:hint="Enter in a username"
         android:layout_below="@+id/addFriendHeader"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="35dp" />
+        android:layout_marginStart="35dp"
+        android:singleLine="true" />
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/addButton"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
