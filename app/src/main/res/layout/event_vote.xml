@@ -51,10 +51,9 @@
             android:id="@+id/button1"
             android:onClick="restaurantClicked"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"
             android:layout_below="@+id/view"
-            android:layout_alignParentEnd="true" />
+            android:layout_toEndOf="@+id/count2" />
 
         <Button
             android:layout_height="wrap_content"
@@ -64,13 +63,10 @@
             android:id="@+id/button2"
             android:text=""
             android:onClick="restaurantClicked"
-            android:layout_below="@+id/button1"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:layout_below="@+id/button1"
+            android:layout_alignStart="@+id/button3" />
 
         <Button
             android:layout_height="wrap_content"
@@ -78,14 +74,12 @@
             android:layout_weight="0.1"
             android:background="@android:color/transparent"
             android:id="@+id/button3"
-            android:text=""
             android:onClick="restaurantClicked"
             android:layout_below="@+id/button2"
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -96,13 +90,10 @@
             android:id="@+id/button4"
             android:text=""
             android:onClick="restaurantClicked"
-            android:layout_below="@+id/button3"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:layout_below="@+id/button3"
+            android:layout_toEndOf="@+id/count4" />
 
         <Button
             android:layout_height="wrap_content"
@@ -117,7 +108,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -133,7 +123,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -149,7 +138,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -165,7 +153,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -181,7 +168,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -197,7 +183,6 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start"
             android:textAllCaps="false"/>
 
         <Button
@@ -208,7 +193,7 @@
             android:layout_alignTop="@+id/button1"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button1"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -218,7 +203,8 @@
             android:layout_above="@+id/button3"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button2"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder"
+            />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -228,7 +214,7 @@
             android:layout_above="@+id/button4"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button2"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -237,15 +223,18 @@
             android:id="@+id/count4"
             android:layout_alignBottom="@+id/button4"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/button4"
-            android:background="@android:color/transparent" />
+            android:layout_toStartOf="@+id/button2"
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/count5"
-            android:background="@android:color/transparent"
+            android:background="@drawable/button_boarder"
+            android:layout_below="@+id/count4"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/button5" />
             android:layout_alignTop="@+id/button5"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button5" />
@@ -258,7 +247,7 @@
             android:layout_below="@+id/button5"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button5"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -268,7 +257,7 @@
             android:layout_alignTop="@+id/button7"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button7"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -278,7 +267,7 @@
             android:layout_alignTop="@+id/button8"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button8"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -288,7 +277,7 @@
             android:layout_alignTop="@+id/button9"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button9"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -298,7 +287,7 @@
             android:layout_below="@+id/button9"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/button9"
-            android:background="@android:color/transparent" />
+            android:background="@drawable/button_boarder" />
 
     </RelativeLayout>
 
