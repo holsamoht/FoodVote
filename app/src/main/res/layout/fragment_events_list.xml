@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
-android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-android:paddingRight="@dimen/activity_horizontal_margin"
-android:paddingTop="@dimen/activity_vertical_margin"
-android:paddingBottom="@dimen/activity_vertical_margin">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:clickable="false">
 
 
 
 
     <ListView
-        android:layout_width="419dp"
-        android:layout_height="365dp"
+        android:layout_width="fill_parent"
+        android:layout_height="415dp"
         android:id="@+id/eventsList"
         android:layout_gravity="left|top"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/addEvent" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/addEvent"
+        android:cacheColorHint="#f3eb0b"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/fab"
+        android:layout_alignStart="@+id/fab" />
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -33,7 +28,28 @@ android:paddingBottom="@dimen/activity_vertical_margin">
         android:src="@android:drawable/ic_input_add"
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_alignBottom="@+id/eventsList"
-        android:layout_alignParentEnd="true" />
+        android:tint="#FFFFFF"
+        app:backgroundTint="#08EBD1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:id="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/fab"
+        android:background="@null"
+        android:hint="Click me to create a new Event!" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText2"
+        android:layout_above="@+id/eventsList"
+        android:layout_alignParentStart="true"
+        android:text="Your Events"
+        android:background="@null"
+        android:textSize="25dp" />
 
 </RelativeLayout>

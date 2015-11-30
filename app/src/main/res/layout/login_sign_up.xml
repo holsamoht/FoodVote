@@ -3,40 +3,41 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="10dp"
+    android:background="#ffffff">
 
-    <TextView
-        android:id="@+id/usernameHeader"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Username"
-        android:layout_marginTop="43dp"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentStart="true" />
+    <!-- If you want a background picture just do
+    android:background="@folderlocation/nameOfFile"
+    ^ put that in the relative layout portion
+    -->
+
+    <!-- If you want a regular picture anywhere in a specific activity
+    just do use an imageview widget and you can put the sourcefile's path into
+    the section of "src" in the imageview widget in the xml
+    -->
 
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:layout_below="@+id/usernameHeader"
-        android:layout_alignParentLeft="true" />
-
-    <TextView
-        android:id="@+id/passwordHeader"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Password"
-        android:layout_below="@+id/usernameText"
-        android:layout_alignParentLeft="true" />
+        android:autoText="false"
+        android:hint="Username"
+        android:linksClickable="false"
+        android:backgroundTintMode="src_in"
+        android:singleLine="false"
+        android:layout_marginTop="68dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:layout_below="@+id/passwordHeader"
-        android:layout_alignParentLeft="true" />
+        android:hint="Password"
+        android:layout_below="@+id/usernameText"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/loginButton"
@@ -44,23 +45,23 @@
         android:layout_height="wrap_content"
         android:text="@string/LoginButton"
         android:layout_below="@+id/passwordText"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentEnd="true"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/SignUpButton"
         android:layout_below="@+id/loginButton"
-        android:layout_alignParentLeft="true" />
+        android:text="@string/SignUpButton"
+        android:textAllCaps="false"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:id="@+id/imageView"
-        android:src="@drawable/logo"
-        android:layout_alignParentTop="true"
+        android:background="@mipmap/foodvote"
+        android:layout_marginTop="45dp"
         android:layout_centerHorizontal="true" />
-
 
 </RelativeLayout>

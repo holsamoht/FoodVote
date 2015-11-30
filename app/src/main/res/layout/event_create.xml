@@ -60,22 +60,25 @@
         android:text="Current Location" />
 
     <TextView
-        android:layout_width="10000dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose Friends"
         android:id="@+id/friendsHeader"
-        android:layout_toStartOf="@+id/cancelButton"
-        android:layout_below="@+id/location" />
+        android:textSize="25dp"
+        android:textColor="#050000"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/location"
+        android:layout_toStartOf="@+id/cancelButton" />
 
     <ListView
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="200dip"
         android:id="@+id/friendsList"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/createButton"
         android:focusable="false"
-        android:layout_below="@+id/friendsHeader" />
+        android:layout_above="@+id/createButton"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/friendsHeader"
+        android:layout_alignStart="@+id/friendsHeader" />
 
     <Button
         android:layout_width="wrap_content"
