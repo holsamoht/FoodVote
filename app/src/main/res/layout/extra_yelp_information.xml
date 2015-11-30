@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.local1.foodvote.ExtraYelpInformationActivity">
+    tools:context="com.example.local1.foodvote.ExtraYelpInformationActivity"
+    android:background="#ffffff">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -41,7 +42,8 @@
         android:id="@+id/rating"
         android:hint="rating"
         android:layout_above="@+id/type"
-        android:layout_alignStart="@+id/type" />
+        android:layout_alignStart="@+id/type"
+        android:textColor="#010000" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -49,7 +51,8 @@
         android:id="@+id/type"
         android:hint="Type of Food"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/hours" />
+        android:layout_alignStart="@+id/hours"
+        android:textColor="#060000" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -57,11 +60,12 @@
         android:id="@+id/hours"
         android:hint="Hours"
         android:layout_below="@+id/type"
-        android:layout_alignStart="@+id/address" />
+        android:layout_alignStart="@+id/address"
+        android:textColor="#010000" />
 
     <EditText
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:inputType="textPostalAddress"
         android:ems="10"
         android:id="@+id/address"
@@ -69,18 +73,22 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="123dp"
         android:layout_alignEnd="@+id/restuarantName"
-        android:hint="Address" />
+        android:hint="Address"
+        android:textColor="#080000"
+        android:background="@drawable/back" />
 
     <EditText
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/phone"
         android:hint="Phone"
         android:layout_alignTop="@+id/address"
         android:layout_alignStart="@+id/address"
-        android:layout_marginTop="48dp" />
+        android:layout_marginTop="48dp"
+        android:textColor="#080000"
+        android:background="@drawable/back"/>
 
 
 </RelativeLayout>
