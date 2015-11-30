@@ -36,12 +36,19 @@ public class YelpDataActivity extends AppCompatActivity implements
     String businessType;
     String loc;
 
+
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     YelpAPI yAPI;
 
     List<String> eventParticipants = new ArrayList<String>();
     List<String> restaurants = new ArrayList<String>();
+    List<String> phoneNumbers = new ArrayList<String>();
+    List<String> addresses = new ArrayList<String>();
+    List<String> ratings = new ArrayList<String>();
+    List<String> typeOfFood = new ArrayList<String>();
+    List<String> hours = new ArrayList<String>();
+
 
     // Yelp API keys
     private static final String CONSUMER_KEY = "FQFe1MpY3PGvxKy-Aq702g";
@@ -183,8 +190,66 @@ public class YelpDataActivity extends AppCompatActivity implements
             startActivity(intent);
             finish();
         } else {
+            /*List<String> phoneNumbers = new ArrayList<String>();
+            List<String> addresses = new ArrayList<String>();
+            List<String> ratings = new ArrayList<String>();
+            List<String> typeOfFood = new ArrayList<String>();*/
+
+
+            List<JSONObject> bus = new ArrayList<JSONObject>();
+
+            for(int i = 0; i < businesses.size(); i++){
+                JSONObject business = (JSONObject) businesses.get(i);
+                restaurants.add(business.get("name").toString());
+                if(business.get("display_phone") != null) {
+                    phoneNumbers.add(business.get("display_phone").toString());
+                }
+                else{
+                    phoneNumbers.add("No Available Phone Number");
+                }
+
+                if(business.get("rating") != null) {
+                    ratings.add(business.get("rating").toString());
+                }
+                else{
+                    ratings.add("No Rating Information Available");
+                }
+
+                JSONObject locationData = (JSONObject)(business.get("location"));
+
+                if(locationData.get("display_address") != null) {
+                    String address = locationData.get("display_address").toString();
+                    Log.e("YDA: ", address);
+                    addresses.add(address);
+                }
+                else{
+                    addresses.add("No Address Available");
+                }
+
+                if(business.get("categories") != null){
+                    List<List<String>> category = (List<List<String>>)business.get("categories");
+                    String categoryStr = "";
+                    for(int j = 0; j < category.size(); j++){
+                        categoryStr = categoryStr + category.get(j).get(0).toString();
+                        if(j < category.size() - 1) {
+                            categoryStr = categoryStr + ", ";
+                        }
+
+                    }
+
+                    Log.e("YDA: ", categoryStr);
+
+                    typeOfFood.add(categoryStr);
+                }
+                else{
+                    typeOfFood.add("Unknown Restaurant Type");
+                }
+
+
+
+            }
             // For now, manually pick the first 5 restaurants.
-            JSONObject business1 = (JSONObject) businesses.get(0);
+            /*JSONObject business1 = (JSONObject) businesses.get(0);
             JSONObject business2 = (JSONObject) businesses.get(1);
             JSONObject business3 = (JSONObject) businesses.get(2);
             JSONObject business4 = (JSONObject) businesses.get(3);
@@ -207,6 +272,8 @@ public class YelpDataActivity extends AppCompatActivity implements
             String R9 = business9.get("name").toString();
             String R10 = business10.get("name").toString();
 
+
+
             // List<String> Restaurants = new ArrayList<>();
             restaurants.add(R1);
             restaurants.add(R2);
@@ -217,7 +284,7 @@ public class YelpDataActivity extends AppCompatActivity implements
             restaurants.add(R7);
             restaurants.add(R8);
             restaurants.add(R9);
-            restaurants.add(R10);
+            restaurants.add(R10);*/
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
             query.whereEqualTo("objectId", eventId);
@@ -227,6 +294,11 @@ public class YelpDataActivity extends AppCompatActivity implements
                     if (e == null) {
                         eventParticipants = list.get(0).getList("eventParticipants");
                         list.get(0).addAll("restaurants", restaurants);
+                        list.get(0).addAll("phoneNumbers", phoneNumbers);
+                        list.get(0).addAll("addresses", addresses);
+                        list.get(0).addAll("ratings", ratings);
+                        list.get(0).addAll("typeOfFood", typeOfFood);
+
                         list.get(0).saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
