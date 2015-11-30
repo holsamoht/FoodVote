@@ -33,7 +33,7 @@ public class EventVoteActivity extends AppCompatActivity {
 
     // Widgets
     Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
-    TextView c1, c2, c3, c4, c5, c6, c7, c8, c9, c10;
+    Button c1, c2, c3, c4, c5, c6, c7, c8, c9, c10;
     Toolbar toolbar;
 
     // TAG
@@ -114,16 +114,16 @@ public class EventVoteActivity extends AppCompatActivity {
         b9 = (Button) findViewById(R.id.button9);
         b10 = (Button) findViewById(R.id.button10);
 
-        c1 = (TextView) findViewById(R.id.count1);
-        c2 = (TextView) findViewById(R.id.count2);
-        c3 = (TextView) findViewById(R.id.count3);
-        c4 = (TextView) findViewById(R.id.count4);
-        c5 = (TextView) findViewById(R.id.count5);
-        c6 = (TextView) findViewById(R.id.count6);
-        c7 = (TextView) findViewById(R.id.count7);
-        c8 = (TextView) findViewById(R.id.count8);
-        c9 = (TextView) findViewById(R.id.count9);
-        c10 = (TextView) findViewById(R.id.count10);
+        c1 = (Button) findViewById(R.id.count1);
+        c2 = (Button) findViewById(R.id.count2);
+        c3 = (Button) findViewById(R.id.count3);
+        c4 = (Button) findViewById(R.id.count4);
+        c5 = (Button) findViewById(R.id.count5);
+        c6 = (Button) findViewById(R.id.count6);
+        c7 = (Button) findViewById(R.id.count7);
+        c8 = (Button) findViewById(R.id.count8);
+        c9 = (Button) findViewById(R.id.count9);
+        c10 = (Button) findViewById(R.id.count10);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -175,7 +175,7 @@ public class EventVoteActivity extends AppCompatActivity {
     }
 
     public void restaurantClicked() {
-        b1.setOnClickListener(new View.OnClickListener() {
+        c1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -264,7 +264,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b2.setOnClickListener(new View.OnClickListener() {
+        c2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -353,7 +353,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b3.setOnClickListener(new View.OnClickListener() {
+        c3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -442,7 +442,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b4.setOnClickListener(new View.OnClickListener() {
+        c4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -531,7 +531,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b5.setOnClickListener(new View.OnClickListener() {
+        c5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -620,7 +620,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b6.setOnClickListener(new View.OnClickListener() {
+        c6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -709,7 +709,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b7.setOnClickListener(new View.OnClickListener() {
+        c7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -798,7 +798,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b8.setOnClickListener(new View.OnClickListener() {
+        c8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -887,7 +887,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b9.setOnClickListener(new View.OnClickListener() {
+        c9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -976,7 +976,7 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
-        b10.setOnClickListener(new View.OnClickListener() {
+        c10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
@@ -1062,6 +1062,126 @@ public class EventVoteActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 0);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 1);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 2);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 3);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 4);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 5);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 6);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 7);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 8);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        b10.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("position", 9);
+                startActivity(intent);
+                finish();
             }
         });
 
