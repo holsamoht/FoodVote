@@ -22,8 +22,6 @@ public class StartupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e(TAG, "In onCreate().");
-
         initializeView();
     }
 
@@ -31,51 +29,42 @@ public class StartupActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Log.e(TAG, "In onStart().");
-
         checkIfLoggedIn();
     }
 
+    /**
+     * Initializes Parse with ID/key and sets up an automatic ParseUser to check authentication.
+     */
     private void initializeView() {
-        Log.e(TAG, "In initializeData().");
-
         // Initialize Parse using application ID and client key.
         Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
 
         // Initialize automatic user.
         ParseUser.enableAutomaticUser();
-
-        // Initialize Parse public access.
         ParseACL defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
     }
 
+    /**
+     * Checks if current user is an anonymous user, if the current user is anonymous, send current
+     * user to login/sign-up activity; else if the current user is not anonymous, send  current user
+     * to events list activity (aka FragmentContainer).
+     */
     private void checkIfLoggedIn() {
-        Log.e(TAG, "In checkIfLoggedIn().");
-
-        // Check whether the current user is anonymous (not logged in).
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-            // If the user is anonymous (not logged in), send the user to LoginSignUpActivity.class.
-            Intent intent = new Intent(StartupActivity.this,
-                    LoginSignUpActivity.class);
+            Intent intent = new Intent(StartupActivity.this, LoginSignUpActivity.class);
             startActivity(intent);
             finish();
         } else {
-            // Else, user is not anonymous (is logged in), get user data from Parse.com
-            ParseUser currentUser = ParseUser.getCurrentUser();
-
-            // Check if user data was successfully obtained.
-            if (currentUser != null) {
-                // Send logged in user to EventsListActivity.class
-                Intent intent = new Intent(StartupActivity.this, MainActivity.class);
+            // Check if user data was successfully obtained. If not, user -> login/sign-up.
+            if (ParseUser.getCurrentUser() == null) {
+                Intent intent = new Intent(StartupActivity.this, LoginSignUpActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                // User data was not successfully obtained, send user to LoginSignUpActivity.class
-                Intent intent = new Intent(StartupActivity.this,
-                        LoginSignUpActivity.class);
+                Intent intent = new Intent(StartupActivity.this, FragmentContainer.class);
                 startActivity(intent);
                 finish();
             }

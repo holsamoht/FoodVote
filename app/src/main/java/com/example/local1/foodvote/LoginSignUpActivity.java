@@ -1,7 +1,6 @@
 package com.example.local1.foodvote;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,12 +8,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -24,10 +21,10 @@ public class LoginSignUpActivity extends AppCompatActivity {
     String passwordText;
 
     // Widgets
-    EditText password;
-    EditText username;
     Button loginButton;
     Button signUpButton;
+    EditText password;
+    EditText username;
 
     // Log TAG
     private static final String TAG = "LoginSignUpActivity ";
@@ -36,11 +33,6 @@ public class LoginSignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e(TAG, "In onCreate().");
-
-        //ImageView mImageView = (ImageView) findViewById(R.id.imageView);
-        //mImageView.setImageResource(R.drawable.logo);
-
         initializeView();
     }
 
@@ -48,73 +40,85 @@ public class LoginSignUpActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Log.e(TAG, "In onStart().");
-
         login();
         signUp();
     }
 
+    /**
+     * Initialize view and locate widgets within login_sign_up.xml.
+     */
     private void initializeView() {
-        Log.e(TAG, "In initializeData().");
-
         // Set the view from login_sign_up.xml.
         setContentView(R.layout.login_sign_up);
 
-        // Locate EditTexts in login_sign_up.xml.
-        username = (EditText) findViewById(R.id.usernameText);
-        password = (EditText) findViewById(R.id.passwordText);
-
-        // Locate Buttons in login_sign_up.xml.
+        // Locate widgets in login_sign_up.xml
         loginButton = (Button) findViewById(R.id.loginButton);
         signUpButton = (Button) findViewById(R.id.signUpButton);
+        username = (EditText) findViewById(R.id.usernameText);
+        password = (EditText) findViewById(R.id.passwordText);
     }
 
+    /**
+     * On login button press, log in current user by authenticating info. If either username
+     * or password was entered incorrectly, display message that login failed or if the current
+     * user does not exist within our database, user must sign-up first.
+     */
     private void login() {
-        Log.e(TAG, "In login().");
-
-        // Login Button click listener.
+        // Login button click listener.
         loginButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                // Retrieve the text entered from the EditText.
+                // Retrieve username and password entered in the EditText.
                 usernameText = username.getText().toString();
                 passwordText = password.getText().toString();
 
-                // Send data to Parse.com for verification.
-                ParseUser.logInInBackground(usernameText, passwordText, new LogInCallback() {
-                    @Override
-                    public void done(ParseUser parseUser, ParseException e) {
-                        // If user exists and authenticated, send user to EventsListActivity.class.
-                        if (parseUser != null) {
-                            Intent intent = new Intent(LoginSignUpActivity.this,
-                                    MainActivity.class);
-                            startActivity(intent);
-                            Toast.makeText(getApplicationContext(), "Successfully logged in.",
-                                    Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(),
-                                    "No user exists, please sign-up.",
-                                    Toast.LENGTH_SHORT).show();
+                // If username or password is not entered, display message to enter in info; else,
+                // try to log user in.
+                if (usernameText.equals("") || passwordText.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter in username and password",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    ParseUser.logInInBackground(usernameText, passwordText, new LogInCallback() {
+                        @Override
+                        public void done(ParseUser parseUser, ParseException e) {
+                            if (parseUser == null) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Username or password is wrong, please try again.",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Logged in.",
+                                        Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(LoginSignUpActivity.this,
+                                        FragmentContainer.class);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     }
 
+    /**
+     * On sign-up button press, create a new ParseUser object within Parse and store entered in
+     * username and password. Usernames must be unique.
+     */
     private void signUp() {
-        Log.e(TAG, "In signUp().");
-
-        // Sign up Button click listener.
+        // Sign-up Button click listener.
         signUpButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                // Retrieve the text entered from the EditText.
+                // Retrieve username and password entered in the EditText.
                 usernameText = username.getText().toString();
                 passwordText = password.getText().toString();
 
-                // Force user to fill out the sign up form.
-                if (!(usernameText.equals("")) && !(passwordText.equals(""))) {
-                    // Save new user data into Parse.com data storage.
+                // If username or password is not entered, display message to enter in info; else,
+                // create a new ParseUser with entered in info and save to Parse.
+                if (usernameText.equals("") || passwordText.equals("")) {
+                    Toast.makeText(getApplicationContext(),
+                            "Please complete the sign-up form.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
                     ParseUser user = new ParseUser();
                     user.setUsername(usernameText);
                     user.setPassword(passwordText);
@@ -122,7 +126,7 @@ public class LoginSignUpActivity extends AppCompatActivity {
                         public void done(ParseException e) {
                             if (e == null) {
                                 Toast.makeText(getApplicationContext(),
-                                        "Successfully signed up, please log in.",
+                                        "Signed up, please log in.",
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getApplicationContext(),
@@ -131,10 +135,6 @@ public class LoginSignUpActivity extends AppCompatActivity {
                             }
                         }
                     });
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Please complete the sign-up form.",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -32,30 +32,40 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Event Name"
-        android:id="@+id/eventHeader"
-        android:layout_below="@+id/view"
-        android:layout_alignParentStart="true" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/eventName"
-        android:hint="e.g. Food Date"
-        android:layout_below="@+id/eventHeader"
-        android:layout_alignStart="@+id/eventHeader"
-        android:layout_alignEnd="@+id/cancelButton" />
+        android:hint="e.g. event name"
+        android:layout_below="@+id/view"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/typeOfBusiness"
+        android:layout_below="@+id/eventName"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:hint="e.g. restaurants, japanese, mexican, etc" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/location"
+        android:layout_below="@+id/typeOfBusiness"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:text="Current Location" />
 
     <TextView
         android:layout_width="10000dp"
         android:layout_height="wrap_content"
         android:text="Choose Friends"
         android:id="@+id/friendsHeader"
-        android:layout_below="@+id/eventName"
-        android:layout_alignEnd="@+id/createButton" />
+        android:layout_toStartOf="@+id/cancelButton"
+        android:layout_below="@+id/location" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -73,7 +83,8 @@
         android:text="Create"
         android:id="@+id/createButton"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/eventHeader" />
+        android:layout_toStartOf="@+id/cancelButton"
+        android:layout_marginEnd="56dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -81,8 +92,8 @@
         android:text="Cancel"
         android:id="@+id/cancelButton"
         android:layout_marginLeft="25dp"
-        android:layout_marginStart="55dp"
+        android:layout_marginEnd="79dp"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/createButton" />
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

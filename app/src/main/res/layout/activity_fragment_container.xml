@@ -4,7 +4,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
 android:layout_height="match_parent" android:fitsSystemWindows="true"
-tools:context="com.example.local1.foodvote.MainActivity">
+tools:context=".FragmentContainer">
 
 <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
     android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
@@ -15,8 +15,6 @@ tools:context="com.example.local1.foodvote.MainActivity">
 
 </android.support.design.widget.AppBarLayout>
 
-<include layout="@layout/content_activity_main" />
-
-
+<include layout="@layout/content_fragment_container" />
 
 </android.support.design.widget.CoordinatorLayout>

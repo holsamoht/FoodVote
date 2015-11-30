@@ -22,6 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -41,6 +42,8 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     // Variables
     String nameOfEvent;
+    String bus;
+    String loc;
     String[] noFriends = {"You currently have no friends."};
     String mLatitudeText;
     String mLongitudeText;
@@ -52,7 +55,6 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     List<Boolean> clicked = new ArrayList<Boolean>();
     List<Integer> votes = new ArrayList<Integer>();
-    List<Integer> choiceIndex = new ArrayList<Integer>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     List<String> eventParticipants = new ArrayList<String>();
@@ -62,11 +64,10 @@ public class EventCreateActivity extends AppCompatActivity implements
     Button createButton;
     Button cancelButton;
     EditText eventName;
+    EditText typeOfBusiness;
+    EditText location;
     ListView listFriends;
     Toolbar toolbar;
-
-    // User
-    ParseUser currentUser;
 
     //RunVariable
     boolean isSetUp = false;
@@ -84,16 +85,12 @@ public class EventCreateActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e(TAG, "In onCreate().");
-
         initializeView();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        Log.e(TAG, "In onStart().");
 
         if(isSetUp == false) {
             selectUserFriends();
@@ -106,31 +103,32 @@ public class EventCreateActivity extends AppCompatActivity implements
     }
 
     public void onConnected(Bundle bundle) {
-        Log.e(TAG, "In onConnected().");
+        loc = location.getText().toString();
 
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
-
-        // Use if developing on an android phone.
-        if (mLastLocation != null) {
-            mLatitudeText = String.valueOf(mLastLocation.getLatitude());
-            mLongitudeText = String.valueOf(mLastLocation.getLongitude());
-            String location = mLatitudeText + ", " + mLongitudeText;
-            String YelpJSON = setUpAPIRet(yAPI, location);
-            parseAndDisplayRestaurantOutput(YelpJSON);
-            mGoogleApiClient.disconnect();
+        if (loc.toLowerCase().equals("current location")) {
+            // Use if developing on an android phone.
+            if (mLastLocation != null) {
+                mLatitudeText = String.valueOf(mLastLocation.getLatitude());
+                mLongitudeText = String.valueOf(mLastLocation.getLongitude());
+                String location = mLatitudeText + ", " + mLongitudeText;
+                String YelpJSON = setUpAPIRet(yAPI, location);
+                parseAndDisplayRestaurantOutput(YelpJSON);
+                mGoogleApiClient.disconnect();
+            }
         }
 
         // Use if developing on an emulator.
-        /*if (mLastLocation == null) {
+        if (mLastLocation == null) {
             mLatitudeText = "32.8810";
             mLongitudeText = "-117.2380";
             String location = mLatitudeText + ", " + mLongitudeText;
             String YelpJSON = setUpAPIRet(yAPI, location);
             parseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
-        }*/
+        }
     }
 
     @Override
@@ -153,9 +151,7 @@ public class EventCreateActivity extends AppCompatActivity implements
     public void onBackPressed() {
         super.onBackPressed();
 
-        Log.e(TAG, "In onBackPressed");
-
-        Intent intent = new Intent(EventCreateActivity.this, MainActivity.class);
+        Intent intent = new Intent(EventCreateActivity.this, FragmentContainer.class);
         startActivity(intent);
         finish();
     }
@@ -183,7 +179,6 @@ public class EventCreateActivity extends AppCompatActivity implements
     }
 
     private void initializeView() {
-        Log.e(TAG, "In initializeView().");
 
         // Set view from event_create.xml.
         setContentView(R.layout.event_create);
@@ -192,6 +187,8 @@ public class EventCreateActivity extends AppCompatActivity implements
         createButton = (Button) findViewById(R.id.createButton);
         cancelButton = (Button) findViewById(R.id.cancelButton);
         eventName = (EditText) findViewById(R.id.eventName);
+        typeOfBusiness = (EditText) findViewById(R.id.typeOfBusiness);
+        location = (EditText) findViewById(R.id.location);
         listFriends = (ListView) findViewById(R.id.friendsList);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -210,14 +207,17 @@ public class EventCreateActivity extends AppCompatActivity implements
     }
 
     private void selectUserFriends() {
-        Log.e(TAG, "In selectUserFriends().");
 
         try {
             // Get a list of user IDs from current user's friends list.
-            userFriendIDs = currentUser.getCurrentUser().getList("friendsList");
+            userFriendIDs = ParseUser.getCurrentUser().getList("friendsList");
 
             // If user IDs were found, convert to usernames else print msg saying no friends.
-            if (userFriendIDs != null) {
+            if (userFriendIDs == null) {
+                // Display msg that current user has no friends.
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
+                listFriends.setAdapter(adapter);
+            } else {
                 // Convert the user IDs to usernames and add to another list.
                 for (int i = 0; i < userFriendIDs.size(); i++) {
                     ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -225,55 +225,46 @@ public class EventCreateActivity extends AppCompatActivity implements
                 }
 
                 // Print out current user's friends.
-                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, userFriends);
+                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends,
+                        userFriends);
                 listFriends.setAdapter(adapter);
 
                 // Set clicked (selected) flag to false.
                 for (int i = 0; i < userFriendIDs.size(); i++) {
                     clicked.add(false);
                 }
-            } else {
-                // Display msg that current user has no friends.
-                ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
-                listFriends.setAdapter(adapter);
             }
         } catch (NullPointerException e) {
             // Display msg that current user has no friends.
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
+            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends,
+                    noFriends);
             listFriends.setAdapter(adapter);
         } catch (ParseException e) {
             Log.e(TAG, "Unable to convert userIDs to usernames.");
         }
 
-        // TODO remove after fragments work.
-        listFriends.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
-            @Override
-            public void onSwipeRight() {
-                Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
         // On item click, highlight friend and add them to list of event participants.
         listFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (userFriendIDs != null) {
+                if (userFriendIDs == null) {
+                    Toast.makeText(getApplicationContext(), "Add friends.",
+                            Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(EventCreateActivity.this, FragmentContainer.class);
+                    startActivity(intent);
+                    finish();
+                } else {
                     // If false, highlight friends and add to event, else do the opposite.
-                    if (clicked.get(position) != true) {
-                        eventParticipants.add(userFriendIDs.get(position));
-                        listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
-                        clicked.set(position, true);
-                    } else {
+                    if (clicked.get(position)) {
                         eventParticipants.remove(userFriendIDs.get(position));
                         listFriends.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
                         clicked.set(position, false);
+                    } else {
+                        eventParticipants.add(userFriendIDs.get(position));
+                        listFriends.getChildAt(position).setBackgroundColor(Color.GREEN);
+                        clicked.set(position, true);
                     }
-                } else {
-                    Intent intent = new Intent(EventCreateActivity.this, FriendsListActivity.class);
-                    startActivity(intent);
-                    finish();
                 }
             }
         });
@@ -292,75 +283,89 @@ public class EventCreateActivity extends AppCompatActivity implements
                             Toast.LENGTH_LONG).show();
                 } else {
                     // Create the event/set all parameters for the event.
-                    ParseObject event = new ParseObject("Event");
-                    event.put("eventName", nameOfEvent);
-                    event.put("eventOwner", currentUser.getCurrentUser().getObjectId());
-
-                    event.addAll("eventParticipants", eventParticipants);
-                    event.add("eventParticipants", currentUser.getCurrentUser().getObjectId());
-
-                    event.addAll("restaurants", restaurants);
-
-                    for (int i = 0; i < 10; i++) {
-                        votes.add(0);
-                    }
-                    event.addAll("votes", votes);
-
-                    for (int i = 0; i < eventParticipants.size() + 1; i++) {
-                        choiceIndex.add(-1);
-                    }
-                    event.addAll("choiceIndex", choiceIndex);
-
-                    ParseACL newACL = new ParseACL();
-                    newACL.setPublicReadAccess(true);
-                    newACL.setPublicWriteAccess(true);
-                    event.setACL(newACL);
-                    event.saveInBackground(new SaveCallback() {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                    query.whereEqualTo("eventName", nameOfEvent);
+                    query.getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("eventName", nameOfEvent);
-                                query.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(ParseObject parseObject, ParseException e) {
+                            if (parseObject == null) {
+                                ParseObject event = new ParseObject("Event");
+                                event.put("eventName", nameOfEvent);
+                                event.put("eventOwner", ParseUser.getCurrentUser().getObjectId());
+
+                                event.addAll("eventParticipants", eventParticipants);
+                                event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
+
+                                event.addAll("restaurants", restaurants);
+
+                                for (int i = 0; i < 10; i++) {
+                                    votes.add(0);
+                                }
+                                event.addAll("votes", votes);
+
+                                ParseACL newACL = new ParseACL();
+                                newACL.setPublicReadAccess(true);
+                                newACL.setPublicWriteAccess(true);
+                                event.setACL(newACL);
+                                event.saveInBackground(new SaveCallback() {
                                     @Override
-                                    public void done(List<ParseObject> list, ParseException e) {
+                                    public void done(ParseException e) {
                                         if (e == null) {
-                                            // Add event to current user.
-                                            currentUser.getCurrentUser().add("eventsList",
-                                                    list.get(0).getObjectId());
-
-                                            eventId = list.get(0).getObjectId();
-
-                                            // Send a request to each added participant.
-                                            for (int i = 0; i < eventParticipants.size(); i++) {
-                                                ParseObject request = new ParseObject("EventRequest");
-                                                request.put("requestFrom", currentUser.getCurrentUser().getObjectId());
-                                                request.put("requestTo", eventParticipants.get(i));
-                                                request.put("status", "pending");
-                                                request.put("eventId", eventId);
-                                                ParseACL newACL = new ParseACL();
-                                                newACL.setPublicReadAccess(true);
-                                                newACL.setPublicWriteAccess(true);
-                                                // newACL.setWriteAccess(eventParticipants.get(i), true);
-                                                request.setACL(newACL);
-                                                request.saveInBackground();
-                                            }
-
-                                            currentUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                            query.whereEqualTo("eventName", nameOfEvent);
+                                            query.findInBackground(new FindCallback<ParseObject>() {
                                                 @Override
-                                                public void done(ParseException e) {
+                                                public void done(List<ParseObject> list, ParseException e) {
                                                     if (e == null) {
-                                                        Intent intent = new Intent(EventCreateActivity.this,
-                                                                EventVoteActivity.class);
-                                                        intent.putExtra("eventId", eventId);
-                                                        startActivity(intent);
-                                                        finish();
+                                                        // Add event to current user.
+                                                        ParseUser.getCurrentUser().add("eventsList",
+                                                                list.get(0).getObjectId());
+
+                                                        eventId = list.get(0).getObjectId();
+
+                                                        // Send a request to each added participant.
+                                                        for (int i = 0; i < eventParticipants.size(); i++) {
+                                                            ParseObject request = new
+                                                                    ParseObject("EventRequest");
+                                                            request.put("requestFrom",
+                                                                    ParseUser.getCurrentUser().getObjectId());
+                                                            request.put("requestTo",
+                                                                    eventParticipants.get(i));
+                                                            request.put("action", "add");
+                                                            request.put("status", "pending");
+                                                            request.put("eventId", eventId);
+                                                            ParseACL newACL = new ParseACL();
+                                                            newACL.setPublicReadAccess(true);
+                                                            newACL.setPublicWriteAccess(true);
+                                                            request.setACL(newACL);
+                                                            request.saveInBackground();
+                                                        }
+
+                                                        ParseUser.getCurrentUser().saveInBackground(
+                                                                new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                if (e == null) {
+                                                                    Intent intent = new Intent(
+                                                                            EventCreateActivity.this,
+                                                                            EventVoteActivity.class);
+                                                                    intent.putExtra("eventId",
+                                                                            eventId);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                 }
                                             });
                                         }
                                     }
                                 });
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Please enter a different name.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -370,12 +375,10 @@ public class EventCreateActivity extends AppCompatActivity implements
     }
 
     private void cancelEvent() {
-        Log.e(TAG, "In cancelEvent().");
-
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EventCreateActivity.this, MainActivity.class);
+                Intent intent = new Intent(EventCreateActivity.this, FragmentContainer.class);
                 startActivity(intent);
                 finish();
             }
@@ -384,6 +387,8 @@ public class EventCreateActivity extends AppCompatActivity implements
 
     // Method gets the API call in JSON format.
     public String setUpAPIRet(YelpAPI yelp, String location) {
+        Log.e(TAG, "In setUpAPIRet");
+
         // To return.
         String ret = "";
 
@@ -400,6 +405,8 @@ public class EventCreateActivity extends AppCompatActivity implements
 
 
     public void parseAndDisplayRestaurantOutput(final String yelpJSON) {
+        Log.e(TAG, "In parseAndDisplayRestaurantOutput");
+
         JSONParser parser = new JSONParser();
         JSONObject response = null;
 

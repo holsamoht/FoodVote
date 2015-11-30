@@ -26,8 +26,7 @@ import java.util.List;
 public class EventVoteActivity extends AppCompatActivity {
     // Variables
     int[] count = new int[10];
-    int restaurantIndex;
-    String eventId;
+    static String eventId;
     List<Integer> voteCounts = new ArrayList<Integer>();
     List<String> restaurantNames = new ArrayList<String>();
     List<ParseObject> tempList = new ArrayList<ParseObject>();
@@ -64,7 +63,7 @@ public class EventVoteActivity extends AppCompatActivity {
 
         Log.e(TAG, "In onBackPressed().");
 
-        Intent intent = new Intent(EventVoteActivity.this, MainActivity.class);
+        Intent intent = new Intent(EventVoteActivity.this, FragmentContainer.class);
         startActivity(intent);
         finish();
     }
@@ -155,7 +154,6 @@ public class EventVoteActivity extends AppCompatActivity {
         c8.setText(String.valueOf(voteCounts.get(7)));
         c9.setText(String.valueOf(voteCounts.get(8)));
         c10.setText(String.valueOf(voteCounts.get(9)));
-
     }
 
     private void listEventRestaurants() {
@@ -171,7 +169,6 @@ public class EventVoteActivity extends AppCompatActivity {
         b8.setText(restaurantNames.get(7));
         b9.setText(restaurantNames.get(8));
         b10.setText(restaurantNames.get(9));
-
     }
 
     public void restaurantClicked() {
@@ -203,7 +200,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[0]++;
                                                 c1.setText(String.valueOf(count[0]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(0);
                                                 voteCounts.add(0, count[0]);
@@ -222,7 +220,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -242,17 +244,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(0);
                                                             voteCounts.add(0, count[0]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -290,7 +289,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[1]++;
                                                 c2.setText(String.valueOf(count[1]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(1);
                                                 voteCounts.add(1, count[1]);
@@ -309,7 +309,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -329,17 +333,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(1);
                                                             voteCounts.add(1, count[1]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -377,7 +378,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[2]++;
                                                 c3.setText(String.valueOf(count[2]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(2);
                                                 voteCounts.add(2, count[2]);
@@ -396,7 +398,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -416,17 +422,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(2);
                                                             voteCounts.add(2, count[2]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -464,7 +467,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[3]++;
                                                 c4.setText(String.valueOf(count[3]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(3);
                                                 voteCounts.add(3, count[3]);
@@ -483,7 +487,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -503,17 +511,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(3);
                                                             voteCounts.add(3, count[3]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -551,7 +556,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[4]++;
                                                 c5.setText(String.valueOf(count[4]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(4);
                                                 voteCounts.add(4, count[4]);
@@ -570,7 +576,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -590,17 +600,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(4);
                                                             voteCounts.add(4, count[4]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -638,7 +645,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[5]++;
                                                 c6.setText(String.valueOf(count[5]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(5);
                                                 voteCounts.add(5, count[5]);
@@ -657,7 +665,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -677,17 +689,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(5);
                                                             voteCounts.add(5, count[5]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -725,7 +734,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[6]++;
                                                 c7.setText(String.valueOf(count[6]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(6);
                                                 voteCounts.add(6, count[6]);
@@ -744,7 +754,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -764,17 +778,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(6);
                                                             voteCounts.add(6, count[6]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -812,7 +823,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[7]++;
                                                 c8.setText(String.valueOf(count[7]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(7);
                                                 voteCounts.add(7, count[7]);
@@ -831,7 +843,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -851,17 +867,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(7);
                                                             voteCounts.add(7, count[7]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -899,7 +912,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[8]++;
                                                 c9.setText(String.valueOf(count[8]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(8);
                                                 voteCounts.add(8, count[8]);
@@ -918,7 +932,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -938,17 +956,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(8);
                                                             voteCounts.add(8, count[8]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -986,7 +1001,8 @@ public class EventVoteActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 count[9]++;
                                                 c10.setText(String.valueOf(count[9]));
-                                                Toast.makeText(getApplicationContext(), "Restaurant voted.",
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
                                                 voteCounts.remove(9);
                                                 voteCounts.add(9, count[9]);
@@ -1005,7 +1021,11 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject != null) {
+                                    if (parseObject == null) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "You have already voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
                                         parseObject.deleteInBackground();
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
@@ -1025,17 +1045,14 @@ public class EventVoteActivity extends AppCompatActivity {
                                                                     Toast.LENGTH_SHORT).show();
                                                             voteCounts.remove(9);
                                                             voteCounts.add(9, count[9]);
-                                                            tempList.get(0).addAll("votes", voteCounts);
+                                                            tempList.get(0).addAll("votes",
+                                                                    voteCounts);
                                                             tempList.get(0).saveInBackground();
                                                         }
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -1046,97 +1063,4 @@ public class EventVoteActivity extends AppCompatActivity {
         });
 
     }
-
-    /*
-    public void restaurantClicked(View v) {
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantIndex = 0;
-            }
-        });
-
-        b2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantIndex = 1;
-            }
-        });
-
-        b3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantIndex = 2;
-            }
-        });
-
-        b4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantIndex = 3;
-            }
-        });
-
-        b5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantIndex = 4;
-            }
-        });
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        query.whereEqualTo("objectId", eventId);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    List<Integer> choiceIndex = list.get(0).getList("choiceIndex");
-                    List<Integer> votes = list.get(0).getList("votes");
-                    List<String> eventParticipants = list.get(0).getList("eventParticipants");
-
-                    int participantIndex = -1;
-                    for (int i = 0; i < eventParticipants.size(); i++) {
-                        if (eventParticipants.get(i).equals(ParseUser.getCurrentUser().getObjectId())) {
-                            participantIndex = i;
-                        }
-                    }
-
-                    // Limits the vote to one per user but doesn't allow changing votes.
-                    // if (choiceIndex.get(participantIndex).intValue() >= 0) {
-                        // do nothing
-                    // }
-                    // else {
-                    //     votes.set(restaurantIndex,
-                    //            Integer.valueOf(votes.get(restaurantIndex).intValue() + 1));
-                    //    choiceIndex.set(participantIndex, restaurantIndex);
-                    // }
-
-                    // Increments vote only once but won't allow user to change votes. Should allow
-                    // user to change vote.
-                    // if (choiceIndex.get(participantIndex).intValue() != -1) {
-                    //    votes.set(choiceIndex.get(participantIndex).intValue(),
-                    //            Integer.valueOf(votes.get(choiceIndex.get(participantIndex)).intValue() - 1));
-                    // }
-                    // votes.set(restaurantIndex,
-                    //         Integer.valueOf(votes.get(restaurantIndex).intValue() + 1));
-                    // choiceIndex.set(participantIndex, restaurantIndex);
-
-                    list.get(0).put("choiceIndex", choiceIndex);
-                    list.get(0).put("votes", votes);
-                    list.get(0).saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Intent intent = getIntent();
-                            overridePendingTransition(0, 0);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            finish();
-                            overridePendingTransition(0, 0);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            }
-        });
-    }
-    */
 }
