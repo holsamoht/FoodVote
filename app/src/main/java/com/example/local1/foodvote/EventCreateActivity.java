@@ -113,57 +113,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
         }
     }
 
-    /*
-    public void onConnected(Bundle bundle) {
-        loc = location.getText().toString();
-
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-
-        if (loc.toLowerCase().equals("current location")) {
-            // Use if developing on an android phone.
-            if (mLastLocation != null) {
-                mLatitudeText = String.valueOf(mLastLocation.getLatitude());
-                mLongitudeText = String.valueOf(mLastLocation.getLongitude());
-                String location = mLatitudeText + ", " + mLongitudeText;
-                String YelpJSON = setUpAPIRet(yAPI, location);
-                parseAndDisplayRestaurantOutput(YelpJSON);
-                mGoogleApiClient.disconnect();
-            }
-        }
-
-        // Use if developing on an emulator.
-        if (mLastLocation == null) {
-            mLatitudeText = "32.8810";
-            mLongitudeText = "-117.2380";
-            String location = mLatitudeText + ", " + mLongitudeText;
-            String YelpJSON = setUpAPIRet(yAPI, location);
-            parseAndDisplayRestaurantOutput(YelpJSON);
-            mGoogleApiClient.disconnect();
-        }
-    }
-    */
-
-    /*
-    @Override
-    public void onConnectionSuspended(int x) {
-        Log.e(TAG, "In onConnectionSuspended().");
-        Log.e(TAG, "Connection suspended.");
-
-        Toast.makeText(getApplicationContext(), "Connection suspended.", Toast.LENGTH_SHORT).show();
-    }
-    */
-
-    /*
-    @Override
-    public void onConnectionFailed(ConnectionResult c) {
-        Log.e(TAG, "In onConnectionFailed().");
-        Log.e(TAG, "Connection failed.");
-
-        Toast.makeText(getApplicationContext(), "Connection failed.", Toast.LENGTH_SHORT).show();
-    }
-    */
-
+    /* the last activity was FragmentContainer */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -173,6 +123,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
         finish();
     }
 
+    /* set Logged In menu option */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -182,6 +133,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
         return true;
     }
 
+    /* when user clicks Log Out in menu options, log the user out and go to LoginSignUpActivity */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -293,18 +245,25 @@ public class EventCreateActivity extends AppCompatActivity /* implements
         });
     }
 
+    // called from onStart()
     private void createEvent() {
+        // if the user clicks the Create button, create a new event
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get values from text boxes
                 nameOfEvent = eventName.getText().toString();
                 bus = typeOfBusiness.getText().toString();
                 loc = location.getText().toString();
 
+                // make the user enter a name for the event if they did not
                 if (nameOfEvent.equals("")) {
                     Toast.makeText(getApplicationContext(), "Please enter name of event.",
                             Toast.LENGTH_LONG).show();
-                } else {
+                } 
+                // otherwise make the event
+                else {
+                    // create the event and initialize name, owner, and participants
                     final ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", ParseUser.getCurrentUser().getObjectId());
@@ -312,76 +271,35 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                     event.addAll("eventParticipants", eventParticipants);
                     event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
 
+                    // initialize votes array to 0
                     for (int i = 0; i < 10; i++) {
                         votes.add(0);
                     }
                     event.addAll("votes", votes);
 
+                    // set the event to be read and write accessible
                     ParseACL newACL = new ParseACL();
                     newACL.setPublicReadAccess(true);
                     newACL.setPublicWriteAccess(true);
                     event.setACL(newACL);
+
+                    // now save the event
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
+                            // if event is saved successfully, go to YelpDataActivity
                             if (e == null) {
                                 eventId = event.getObjectId();
 
                                 Intent intent = new Intent(
                                         EventCreateActivity.this,
                                         YelpDataActivity.class);
+                                // pass some strings into YelpDataActivity
                                 intent.putExtra("eventId", eventId);
                                 intent.putExtra("businessType", bus);
                                 intent.putExtra("location", loc);
                                 startActivity(intent);
                                 finish();
-
-                                /*
-                                // Add event to current user.
-                                ParseUser.getCurrentUser().add("eventsList",
-                                        event.getObjectId());
-
-                                eventId = event.getObjectId();
-
-                                // Send a request to each added participant.
-                                for (int i = 0; i < eventParticipants.size(); i++) {
-                                    ParseObject request = new
-                                            ParseObject("EventRequest");
-                                    request.put("requestFrom",
-                                            ParseUser.getCurrentUser().getObjectId());
-                                    request.put("requestTo",
-                                            eventParticipants.get(i));
-                                    request.put("action", "add");
-                                    request.put("status", "pending");
-                                    request.put("eventId", eventId);
-                                    ParseACL newACL = new ParseACL();
-                                    newACL.setPublicReadAccess(true);
-                                    newACL.setPublicWriteAccess(true);
-                                    request.setACL(newACL);
-                                    request.saveInBackground();
-                                }
-
-                                ParseUser.getCurrentUser().saveInBackground(
-                                        new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                if (e == null) {
-                                                    Intent intent = new Intent(
-                                                            EventCreateActivity.this,
-                                                            YelpDataActivity.class);
-                                                    intent.putExtra("eventId",
-                                                            eventId);
-                                                    intent.putExtra("businessType",
-                                                            bus);
-                                                    intent.putExtra("location",
-                                                            loc);
-                                                    startActivity(intent);
-                                                    finish();
-                                                }
-                                            }
-                                        });
-                                */
-
                             }
                         }
                     });
@@ -391,6 +309,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
     }
 
     private void cancelEvent() {
+        // if the user clicks the Cancel button, go back to the FragmentContainer
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
