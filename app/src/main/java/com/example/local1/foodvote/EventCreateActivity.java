@@ -76,6 +76,7 @@ public class EventCreateActivity extends AppCompatActivity {
         }
     }
 
+    /* the last activity was FragmentContainer */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -85,6 +86,7 @@ public class EventCreateActivity extends AppCompatActivity {
         finish();
     }
 
+    /* set Logged In menu option */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -94,6 +96,7 @@ public class EventCreateActivity extends AppCompatActivity {
         return true;
     }
 
+    /* when user clicks Log Out in menu options, log the user out and go to LoginSignUpActivity */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -189,18 +192,25 @@ public class EventCreateActivity extends AppCompatActivity {
         });
     }
 
+    // called from onStart()
     private void createEvent() {
+        // if the user clicks the Create button, create a new event
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get values from text boxes
                 nameOfEvent = eventName.getText().toString();
                 bus = typeOfBusiness.getText().toString();
                 loc = location.getText().toString();
 
+                // make the user enter a name for the event if they did not
                 if (nameOfEvent.equals("")) {
                     Toast.makeText(getApplicationContext(), "Please enter name of event.",
                             Toast.LENGTH_LONG).show();
-                } else {
+                } 
+                // otherwise make the event
+                else {
+                    // create the event and initialize name, owner, and participants
                     final ParseObject event = new ParseObject("Event");
                     event.put("eventName", nameOfEvent);
                     event.put("eventOwner", ParseUser.getCurrentUser().getObjectId());
@@ -208,24 +218,30 @@ public class EventCreateActivity extends AppCompatActivity {
                     event.addAll("eventParticipants", eventParticipants);
                     event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
 
+                    // initialize votes array to 0
                     for (int i = 0; i < 10; i++) {
                         votes.add(0);
                     }
                     event.addAll("votes", votes);
 
+                    // set the event to be read and write accessible
                     ParseACL newACL = new ParseACL();
                     newACL.setPublicReadAccess(true);
                     newACL.setPublicWriteAccess(true);
                     event.setACL(newACL);
+
+                    // now save the event
                     event.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
+                            // if event is saved successfully, go to YelpDataActivity
                             if (e == null) {
                                 eventId = event.getObjectId();
 
                                 Intent intent = new Intent(
                                         EventCreateActivity.this,
                                         YelpDataActivity.class);
+                                // pass some strings into YelpDataActivity
                                 intent.putExtra("eventId", eventId);
                                 intent.putExtra("businessType", bus);
                                 intent.putExtra("location", loc);
@@ -240,6 +256,7 @@ public class EventCreateActivity extends AppCompatActivity {
     }
 
     private void cancelEvent() {
+        // if the user clicks the Cancel button, go back to the FragmentContainer
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
