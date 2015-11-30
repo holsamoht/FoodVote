@@ -41,11 +41,11 @@
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@android:drawable/ic_input_add"
-        android:layout_alignBottom="@+id/addFriend"
-        android:layout_toRightOf="@+id/addFriend"
-        android:layout_toEndOf="@+id/addFriend"
         app:backgroundTint="#08EBD1"
-        android:tint="#FFFFFF" />
+        android:tint="#FFFFFF"
+        android:layout_above="@+id/friendsListHeader"
+        android:layout_toEndOf="@+id/addFriend"
+        android:layout_marginStart="36dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -67,6 +67,8 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/friendsListHeader"
         android:background="#ffffff"
-        android:layout_alignStart="@+id/addFriend" />
+        android:layout_alignStart="@+id/addFriend"
+        android:layout_toStartOf="@+id/addButton"
+        android:layout_alignEnd="@+id/addButton" />
 
 </RelativeLayout>
