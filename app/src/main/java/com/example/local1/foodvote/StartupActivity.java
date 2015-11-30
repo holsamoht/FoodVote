@@ -3,17 +3,17 @@ package com.example.local1.foodvote;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseUser;
 
 public class StartupActivity extends AppCompatActivity {
+    /*
     // Parse API keys.
     private static final String APPLICATION_ID = "eXtNPVXW7taCtotOcfAWtrDEVyZxS1UksSgVSLvm";
     private static final String CLIENT_KEY = "bffulWPQ7a9WaGOQXN8BfI3oNkkhkLtWZql0MUkQ";
+    */
 
     // Log TAG
     private static final String TAG = "StartupActivity ";
@@ -37,7 +37,7 @@ public class StartupActivity extends AppCompatActivity {
      */
     private void initializeView() {
         // Initialize Parse using application ID and client key.
-        Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
+        // Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
 
         // Initialize automatic user.
         ParseUser.enableAutomaticUser();
