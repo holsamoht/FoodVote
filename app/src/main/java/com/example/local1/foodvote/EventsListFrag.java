@@ -106,11 +106,15 @@ public class EventsListFrag extends Fragment {
             userEventIDs = ParseUser.getCurrentUser().getList("eventsList");
 
             try {
+                // if user has no events, show the noEvents string
                 if (userEventIDs == null || userEventIDs.size() == 0) {
                     ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(),
                             R.layout.listview_events, noEvents);
                     listEvents.setAdapter(adapter);
-                } else {
+                } 
+                // otherwise list out the events' names
+                else {
+                    // query for event names
                     for (int i = 0; i < userEventIDs.size(); i++) {
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                         try {
@@ -136,11 +140,14 @@ public class EventsListFrag extends Fragment {
         listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // protective check in case there are no event ids, should never execute
                 if (userEventIDs == null) {
                     Intent intent = new Intent(getActivity(), EventCreateActivity.class);
                     startActivity(intent);
                     getActivity().finish();
-                } else {
+                } 
+                // otherwise go to the event's EventVoteActivity
+                else {
                     Intent intent = new Intent(getActivity(), EventVoteActivity.class);
                     intent.putExtra("eventId", userEventIDs.get(position));
                     startActivity(intent);
@@ -153,25 +160,30 @@ public class EventsListFrag extends Fragment {
         listEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // protective check in case there are no event ids, should never execute 
                 if (userEventIDs == null) {
                     Toast.makeText(getActivity().getApplicationContext(), "No event to delete.",
                             Toast.LENGTH_SHORT).show();
-                } else {
+                } 
+                else {
                     pos = position;
 
-                    // Search Parse for event and delete it.
+                    // Search Parse for event and delete its EventRequest object
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                     query.whereEqualTo("objectId", userEventIDs.get(position));
                     query.whereEqualTo("eventOwner", ParseUser.getCurrentUser().getObjectId());
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, ParseException e) {
-                            // TODO fix this if comment.
+                            // toast error message in case the event was not found
                             if (parseObject == null) {
                                 Toast.makeText(getActivity().getApplicationContext(),
                                         "Deleting event.",
                                         Toast.LENGTH_SHORT).show();
-                            } else {
+                            } 
+                            // otherwise delete the event
+                            else {
+                                // find the EventRequest object for that event and delete it
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("EventRequest");
                                 query.whereEqualTo("eventId", userEventIDs.get(pos));
                                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -215,20 +227,26 @@ public class EventsListFrag extends Fragment {
                     tempQuery.getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject parseObject, ParseException e) {
+                            // error console log in case the event could not be found
                             if (parseObject == null) {
                                 Log.e(TAG, "Unable to delete event.");
-                            } else {
+                            } 
+                            // otherwise go on to delete the event from the user
+                            else {
+                                // remove the current user from the event's list of participants
                                 List<String> list = new ArrayList<String>();
                                 list.add(ParseUser.getCurrentUser().getObjectId());
                                 parseObject.removeAll("eventParticipants", list);
                                 parseObject.saveInBackground();
 
+                                // remove the event from the user's list of events
                                 List<String> tempList = new ArrayList<String>();
                                 tempList.add(userEventIDs.get(pos));
                                 ParseUser.getCurrentUser().removeAll("eventsList", tempList);
                                 ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
+                                        // once this is saved without issues, refresh the activity
                                         if (e == null) {
                                             Intent intent = getActivity().getIntent();
                                             getActivity().overridePendingTransition(0, 0);
