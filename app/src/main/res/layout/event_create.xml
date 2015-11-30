@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.local1.foodvote.EventCreateActivity">
+    tools:context="com.example.local1.foodvote.EventCreateActivity"
+    android:background="#ffffff">
     <!--
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
