@@ -112,7 +112,11 @@ public class EventsListFrag extends Fragment {
                 } else {
                     for (int i = 0; i < userEventIDs.size(); i++) {
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                        userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
+                        try {
+                            userEvents.add(query.get(userEventIDs.get(i)).getString("eventName"));
+                        } catch (ParseException e) {
+                            Log.e(TAG, "Unable to convert event IDs to event names.");
+                        }
                     }
 
                     // Display event names.
@@ -124,8 +128,6 @@ public class EventsListFrag extends Fragment {
                 ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(),
                         R.layout.listview_events, noEvents);
                 listEvents.setAdapter(adapter);
-            } catch (ParseException e) {
-                Log.e(TAG, "Unable to convert event IDs to event names.");
             }
         }
 

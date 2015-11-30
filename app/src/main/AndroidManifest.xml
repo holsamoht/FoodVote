@@ -31,8 +31,9 @@
         <activity android:name=".LoginSignUpActivity" />
         <activity android:name=".EventCreateActivity" />
         <activity android:name=".EventVoteActivity" />
-        <activity android:name=".FragmentContainer"></activity>
-        <activity android:name=".YelpDataActivity"></activity>
+        <activity android:name=".FragmentContainer" />
+        <activity android:name=".YelpDataActivity" />
+        <activity android:name=".ExtraYelpInformationActivity"></activity>
     </application>
 
 </manifest>
