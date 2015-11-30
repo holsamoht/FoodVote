@@ -302,6 +302,128 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                     Toast.makeText(getApplicationContext(), "Please enter name of event.",
                             Toast.LENGTH_LONG).show();
                 } else {
+                    final ParseObject event = new ParseObject("Event");
+                    event.put("eventName", nameOfEvent);
+                    event.put("eventOwner", ParseUser.getCurrentUser().getObjectId());
+
+                    event.addAll("eventParticipants", eventParticipants);
+                    event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
+
+                    for (int i = 0; i < 10; i++) {
+                        votes.add(0);
+                    }
+                    event.addAll("votes", votes);
+
+                    ParseACL newACL = new ParseACL();
+                    newACL.setPublicReadAccess(true);
+                    newACL.setPublicWriteAccess(true);
+                    event.setACL(newACL);
+                    event.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                // Add event to current user.
+                                ParseUser.getCurrentUser().add("eventsList",
+                                        event.getObjectId());
+
+                                eventId = event.getObjectId();
+
+                                // Send a request to each added participant.
+                                for (int i = 0; i < eventParticipants.size(); i++) {
+                                    ParseObject request = new
+                                            ParseObject("EventRequest");
+                                    request.put("requestFrom",
+                                            ParseUser.getCurrentUser().getObjectId());
+                                    request.put("requestTo",
+                                            eventParticipants.get(i));
+                                    request.put("action", "add");
+                                    request.put("status", "pending");
+                                    request.put("eventId", eventId);
+                                    ParseACL newACL = new ParseACL();
+                                    newACL.setPublicReadAccess(true);
+                                    newACL.setPublicWriteAccess(true);
+                                    request.setACL(newACL);
+                                    request.saveInBackground();
+                                }
+
+                                ParseUser.getCurrentUser().saveInBackground(
+                                        new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if (e == null) {
+                                                    Intent intent = new Intent(
+                                                            EventCreateActivity.this,
+                                                            YelpDataActivity.class);
+                                                    intent.putExtra("eventId",
+                                                            eventId);
+                                                    intent.putExtra("businessType",
+                                                            bus);
+                                                    intent.putExtra("location",
+                                                            loc);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }
+                                        });
+
+                                /*
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                query.whereEqualTo("eventName", nameOfEvent);
+                                query.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> list, ParseException e) {
+                                        if (e == null) {
+                                            // Add event to current user.
+                                            ParseUser.getCurrentUser().add("eventsList",
+                                                    list.get(0).getObjectId());
+
+                                            eventId = list.get(0).getObjectId();
+
+                                            // Send a request to each added participant.
+                                            for (int i = 0; i < eventParticipants.size(); i++) {
+                                                ParseObject request = new
+                                                        ParseObject("EventRequest");
+                                                request.put("requestFrom",
+                                                        ParseUser.getCurrentUser().getObjectId());
+                                                request.put("requestTo",
+                                                        eventParticipants.get(i));
+                                                request.put("action", "add");
+                                                request.put("status", "pending");
+                                                request.put("eventId", eventId);
+                                                ParseACL newACL = new ParseACL();
+                                                newACL.setPublicReadAccess(true);
+                                                newACL.setPublicWriteAccess(true);
+                                                request.setACL(newACL);
+                                                request.saveInBackground();
+                                            }
+
+                                            ParseUser.getCurrentUser().saveInBackground(
+                                                    new SaveCallback() {
+                                                        @Override
+                                                        public void done(ParseException e) {
+                                                            if (e == null) {
+                                                                Intent intent = new Intent(
+                                                                        EventCreateActivity.this,
+                                                                        YelpDataActivity.class);
+                                                                intent.putExtra("eventId",
+                                                                        eventId);
+                                                                intent.putExtra("businessType",
+                                                                        bus);
+                                                                intent.putExtra("location",
+                                                                        loc);
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+                                */
+                            }
+                        }
+                    });
+                    /*
                     // Create the event/set all parameters for the event.
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                     query.whereEqualTo("eventName", nameOfEvent);
@@ -315,10 +437,6 @@ public class EventCreateActivity extends AppCompatActivity /* implements
 
                                 event.addAll("eventParticipants", eventParticipants);
                                 event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
-
-                                /*
-                                event.addAll("restaurants", restaurants);
-                                */
 
                                 for (int i = 0; i < 10; i++) {
                                     votes.add(0);
@@ -395,6 +513,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                             }
                         }
                     });
+                    */
                 }
             }
         });
@@ -410,102 +529,4 @@ public class EventCreateActivity extends AppCompatActivity /* implements
             }
         });
     }
-
-    /*
-    // Method gets the API call in JSON format.
-    public String setUpAPIRet(YelpAPI yelp, String location) {
-        Log.e(TAG, "In setUpAPIRet");
-
-        // To return.
-        String ret = "";
-
-        try {
-            // Get the return from the API call.
-            ret = yelp.execute(location).get();
-        } catch (Exception e) {
-            Log.e(TAG, "Caught exception - setUpAPIRet().");
-        }
-
-        Log.e(TAG, "Result = " + ret);
-        return ret;
-    }
-    */
-
-    /*
-    public void parseAndDisplayRestaurantOutput(final String yelpJSON) {
-        Log.e(TAG, "In parseAndDisplayRestaurantOutput");
-
-        JSONParser parser = new JSONParser();
-        JSONObject response = null;
-
-        try {
-            response = (JSONObject) parser.parse(yelpJSON);
-        } catch (org.json.simple.parser.ParseException e) {
-            Log.e(TAG, "Error - Could not parse JSON response" + yelpJSON);
-            System.exit(1);
-        }
-
-        // Each business is now represented as an array entry.
-        JSONArray businesses = (JSONArray) response.get("businesses");
-
-        // For now, manually pick the first 5 restaurants.
-        JSONObject business1 = (JSONObject) businesses.get(0);
-        JSONObject business2 = (JSONObject) businesses.get(1);
-        JSONObject business3 = (JSONObject) businesses.get(2);
-        JSONObject business4 = (JSONObject) businesses.get(3);
-        JSONObject business5 = (JSONObject) businesses.get(4);
-        JSONObject business6 = (JSONObject) businesses.get(5);
-        JSONObject business7 = (JSONObject) businesses.get(6);
-        JSONObject business8 = (JSONObject) businesses.get(7);
-        JSONObject business9 = (JSONObject) businesses.get(8);
-        JSONObject business10 = (JSONObject) businesses.get(9);
-
-        // Get the name of each restaurant.
-        String R1 = business1.get("name").toString();
-        String R2 = business2.get("name").toString();
-        String R3 = business3.get("name").toString();
-        String R4 = business4.get("name").toString();
-        String R5 = business5.get("name").toString();
-        String R6 = business6.get("name").toString();
-        String R7 = business7.get("name").toString();
-        String R8 = business8.get("name").toString();
-        String R9 = business9.get("name").toString();
-        String R10 = business10.get("name").toString();
-
-        // List<String> Restaurants = new ArrayList<>();
-        restaurants.add(R1);
-        restaurants.add(R2);
-        restaurants.add(R3);
-        restaurants.add(R4);
-        restaurants.add(R5);
-        restaurants.add(R6);
-        restaurants.add(R7);
-        restaurants.add(R8);
-        restaurants.add(R9);
-        restaurants.add(R10);
-    }
-    */
-
-    /*
-    // Method to verify google play services on the device.
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(this);
-
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        1000).show();
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        "This device is not supported.", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-    */
 }

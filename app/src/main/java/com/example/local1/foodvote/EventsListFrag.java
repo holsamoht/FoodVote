@@ -105,7 +105,7 @@ public class EventsListFrag extends Fragment {
             userEventIDs = ParseUser.getCurrentUser().getList("eventsList");
 
             try {
-                if (userEventIDs == null) {
+                if (userEventIDs == null || userEventIDs.size() == 0) {
                     ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(),
                             R.layout.listview_events, noEvents);
                     listEvents.setAdapter(adapter);
