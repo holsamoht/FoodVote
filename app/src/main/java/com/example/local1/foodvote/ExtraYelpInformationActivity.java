@@ -3,10 +3,8 @@ package com.example.local1.foodvote;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
@@ -19,7 +17,6 @@ import com.parse.ParseUser;
 import java.util.List;
 
 public class ExtraYelpInformationActivity extends AppCompatActivity {
-
     Toolbar toolbar;
     TextView restaurantName;
     TextView rating;
@@ -49,7 +46,6 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.e("ExYelpInfo: ", "In back");
 
         Intent intent = new Intent(ExtraYelpInformationActivity.this, EventVoteActivity.class);
         intent.putExtra("eventId", getIntent().getExtras().getString("eventId"));
@@ -115,7 +111,5 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
-
 }

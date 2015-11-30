@@ -9,12 +9,6 @@ import com.parse.ParseAnonymousUtils;
 import com.parse.ParseUser;
 
 public class StartupActivity extends AppCompatActivity {
-    /*
-    // Parse API keys.
-    private static final String APPLICATION_ID = "eXtNPVXW7taCtotOcfAWtrDEVyZxS1UksSgVSLvm";
-    private static final String CLIENT_KEY = "bffulWPQ7a9WaGOQXN8BfI3oNkkhkLtWZql0MUkQ";
-    */
-
     // Log TAG
     private static final String TAG = "StartupActivity ";
 
@@ -36,9 +30,6 @@ public class StartupActivity extends AppCompatActivity {
      * Initializes Parse with ID/key and sets up an automatic ParseUser to check authentication.
      */
     private void initializeView() {
-        // Initialize Parse using application ID and client key.
-        // Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
-
         // Initialize automatic user.
         ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();

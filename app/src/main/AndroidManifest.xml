@@ -22,19 +22,26 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".StartupActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginSignUpActivity" />
-        <activity android:name=".EventCreateActivity" />
-        <activity android:name=".EventVoteActivity" />
-        <activity android:name=".FragmentContainer" />
-        <activity android:name=".YelpDataActivity" />
-        <activity android:name=".ExtraYelpInformationActivity"></activity>
+        <activity android:name=".LoginSignUpActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EventCreateActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EventVoteActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".FragmentContainer"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".YelpDataActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ExtraYelpInformationActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

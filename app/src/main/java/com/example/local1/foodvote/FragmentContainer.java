@@ -48,7 +48,6 @@ public class FragmentContainer extends AppCompatActivity {
         super.onStart();
 
         addUserRequests();
-        // TODO too fast, so when owner deletes events before participants can save, issues.
         deleteUserRequests();
     }
 
@@ -95,8 +94,7 @@ public class FragmentContainer extends AppCompatActivity {
     }
 
     /**
-     * TODO Comment on what this method does.
-     * @param viewPager
+     * Builds fragment.
      */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -106,7 +104,7 @@ public class FragmentContainer extends AppCompatActivity {
     }
 
     /**
-     * TODO Comment on what this class does.
+     * Builds fragment.
      */
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
