@@ -220,6 +220,10 @@ public class YelpDataActivity extends AppCompatActivity implements
                 if(locationData.get("display_address") != null) {
                     String address = locationData.get("display_address").toString();
                     Log.e("YDA: ", address);
+
+                    address = address.replace("\"", "");
+                    address = address.replace("[", "");
+                    address = address.replace("]", "");
                     addresses.add(address);
                 }
                 else{

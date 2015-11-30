@@ -3,11 +3,12 @@ package com.example.local1.foodvote;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -48,8 +49,10 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Log.e("ExYelpInfo: ", "In back");
 
         Intent intent = new Intent(ExtraYelpInformationActivity.this, EventVoteActivity.class);
+        intent.putExtra("eventId", getIntent().getExtras().getString("eventId"));
         startActivity(intent);
         finish();
     }
@@ -83,6 +86,9 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
 
     private void initializeView(){
         setContentView(R.layout.extra_yelp_information);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         restaurantName = (TextView)findViewById(R.id.restaurantName);
         rating = (TextView)findViewById(R.id.rating);
         type = (TextView)findViewById(R.id.type);
