@@ -68,6 +68,8 @@ public class FragmentContainer extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
 
+        menu.getItem(0).setTitle("Logged in: " + ParseUser.getCurrentUser().getUsername());
+
         return true;
     }
 

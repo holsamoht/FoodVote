@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -171,6 +172,20 @@ public class EventsListFrag extends Fragment {
                                         "Deleting event.",
                                         Toast.LENGTH_SHORT).show();
                             } else {
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("EventRequest");
+                                query.whereEqualTo("eventId", userEventIDs.get(pos));
+                                query.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> list, ParseException e) {
+                                        if (e == null) {
+                                            for (int i = 0; i < list.size(); i++) {
+                                                list.get(i).deleteInBackground();
+                                            }
+                                        }
+                                    }
+                                });
+
+                                /*
                                 List<String> eventParticipants = new ArrayList<String>();
                                 eventParticipants = parseObject.getList("eventParticipants");
 
@@ -187,6 +202,7 @@ public class EventsListFrag extends Fragment {
                                     request.setACL(newACL);
                                     request.saveInBackground();
                                 }
+                                */
 
                                 parseObject.deleteInBackground();
                             }

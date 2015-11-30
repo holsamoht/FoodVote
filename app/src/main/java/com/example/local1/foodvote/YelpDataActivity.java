@@ -12,9 +12,11 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.simple.JSONArray;
@@ -38,6 +40,7 @@ public class YelpDataActivity extends AppCompatActivity implements
     Location mLastLocation;
     YelpAPI yAPI;
 
+    List<String> eventParticipants = new ArrayList<String>();
     List<String> restaurants = new ArrayList<String>();
 
     // Yelp API keys
@@ -67,8 +70,7 @@ public class YelpDataActivity extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
-        if (loc.toLowerCase().equals("current location")) {
-
+        if (loc.toLowerCase().equals("current location") || loc.isEmpty()) {
             // Use if developing on an android phone.
             if (mLastLocation != null) {
                 mLatitudeText = String.valueOf(mLastLocation.getLatitude());
@@ -91,16 +93,12 @@ public class YelpDataActivity extends AppCompatActivity implements
             }
 
             */
-        }
-
-        else{
+        } else {
             String location = loc;
             String YelpJSON = setUpAPIRet(yAPI, loc, businessType, "Other");
             parseAndDisplayRestaurantOutput(YelpJSON);
             mGoogleApiClient.disconnect();
         }
-
-
     }
 
     @Override
@@ -227,16 +225,43 @@ public class YelpDataActivity extends AppCompatActivity implements
                 @Override
                 public void done(List<ParseObject> list, ParseException e) {
                     if (e == null) {
+                        eventParticipants = list.get(0).getList("eventParticipants");
                         list.get(0).addAll("restaurants", restaurants);
                         list.get(0).saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
-                                    Intent intent = new Intent(YelpDataActivity.this,
-                                            EventVoteActivity.class);
-                                    intent.putExtra("eventId", eventId);
-                                    startActivity(intent);
-                                    finish();
+                                    ParseUser.getCurrentUser().add("eventsList", eventId);
+
+                                    for (int i = 0; i < eventParticipants.size() - 1; i++) {
+                                        ParseObject request = new
+                                                ParseObject("EventRequest");
+                                        request.put("requestFrom",
+                                                ParseUser.getCurrentUser().getObjectId());
+                                        request.put("requestTo",
+                                                eventParticipants.get(i));
+                                        request.put("action", "add");
+                                        request.put("status", "pending");
+                                        request.put("eventId", eventId);
+                                        ParseACL newACL = new ParseACL();
+                                        newACL.setPublicReadAccess(true);
+                                        newACL.setPublicWriteAccess(true);
+                                        request.setACL(newACL);
+                                        request.saveInBackground();
+                                    }
+
+                                    ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Intent intent = new Intent(YelpDataActivity.this,
+                                                        EventVoteActivity.class);
+                                                intent.putExtra("eventId", eventId);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });

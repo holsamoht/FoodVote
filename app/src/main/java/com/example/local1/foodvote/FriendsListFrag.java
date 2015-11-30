@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class FriendsListFrag extends Fragment {
     // Variables
+    int pos;
     List<String> currentFriends = new ArrayList<String>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
@@ -71,6 +73,7 @@ public class FriendsListFrag extends Fragment {
             friendsList = (ListView) getActivity().findViewById(R.id.friendsList);
 
             addFriend();
+            deleteFriend();
             listUserFriends();
             SetUp = true;
         }
@@ -131,20 +134,20 @@ public class FriendsListFrag extends Fragment {
                                                 parseObject.getObjectId());
                                         ParseUser.getCurrentUser().saveInBackground(
                                                 new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                Toast.makeText(getActivity().getApplicationContext(),
-                                                        "User added.",
-                                                        Toast.LENGTH_LONG).show();
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        Toast.makeText(getActivity().getApplicationContext(),
+                                                                "User added.",
+                                                                Toast.LENGTH_LONG).show();
 
-                                                Intent intent = getActivity().getIntent();
-                                                getActivity().overridePendingTransition(0, 0);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                                getActivity().finish();
-                                                getActivity().overridePendingTransition(0, 0);
-                                                startActivity(intent);
-                                            }
-                                        });
+                                                        Intent intent = getActivity().getIntent();
+                                                        getActivity().overridePendingTransition(0, 0);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                                        getActivity().finish();
+                                                        getActivity().overridePendingTransition(0, 0);
+                                                        startActivity(intent);
+                                                    }
+                                                });
                                     }
                                 }
                             }
@@ -155,11 +158,42 @@ public class FriendsListFrag extends Fragment {
         });
     }
 
+    private void deleteFriend() {
+        friendsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (userFriendIDs == null) {
+                    Toast.makeText(getActivity().getApplicationContext(), "No friend to delete",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    pos = position;
+
+                    List<String> tempList = new ArrayList<String>();
+                    tempList.add(userFriendIDs.get(pos));
+                    ParseUser.getCurrentUser().removeAll("friendsList", tempList);
+                    ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            Intent intent = getActivity().getIntent();
+                            getActivity().overridePendingTransition(0, 0);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            getActivity().finish();
+                            getActivity().overridePendingTransition(0, 0);
+                            startActivity(intent);
+                        }
+                    });
+                }
+
+                return true;
+            }
+        });
+    }
+
     private void listUserFriends() {
         try {
             userFriendIDs = ParseUser.getCurrentUser().getList("friendsList");
 
-            if (userFriendIDs == null) {
+            if (userFriendIDs == null || userFriendIDs.size() == 0) {
                 ArrayAdapter adapter = new ArrayAdapter<String> (getActivity(),
                         R.layout.listview_friends, noFriends);
                 friendsList.setAdapter(adapter);

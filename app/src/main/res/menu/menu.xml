@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".EventsListActivity" >
 
+    <item android:id="@+id/current_user"
+        android:title="Username: "
+        android:orderInCategory="1"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_logout"
         android:title="Log Out"
         android:orderInCategory="100"

@@ -176,6 +176,9 @@ public class EventCreateActivity extends AppCompatActivity /* implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        menu.getItem(0).setTitle("Logged in: " + ParseUser.getCurrentUser().getUsername());
+
         return true;
     }
 
@@ -233,7 +236,7 @@ public class EventCreateActivity extends AppCompatActivity /* implements
             userFriendIDs = ParseUser.getCurrentUser().getList("friendsList");
 
             // If user IDs were found, convert to usernames else print msg saying no friends.
-            if (userFriendIDs == null) {
+            if (userFriendIDs == null || userFriendIDs.size() == 0) {
                 // Display msg that current user has no friends.
                 ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.listview_friends, noFriends);
                 listFriends.setAdapter(adapter);
@@ -322,6 +325,18 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
+                                eventId = event.getObjectId();
+
+                                Intent intent = new Intent(
+                                        EventCreateActivity.this,
+                                        YelpDataActivity.class);
+                                intent.putExtra("eventId", eventId);
+                                intent.putExtra("businessType", bus);
+                                intent.putExtra("location", loc);
+                                startActivity(intent);
+                                finish();
+
+                                /*
                                 // Add event to current user.
                                 ParseUser.getCurrentUser().add("eventsList",
                                         event.getObjectId());
@@ -365,155 +380,11 @@ public class EventCreateActivity extends AppCompatActivity /* implements
                                                 }
                                             }
                                         });
-
-                                /*
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("eventName", nameOfEvent);
-                                query.findInBackground(new FindCallback<ParseObject>() {
-                                    @Override
-                                    public void done(List<ParseObject> list, ParseException e) {
-                                        if (e == null) {
-                                            // Add event to current user.
-                                            ParseUser.getCurrentUser().add("eventsList",
-                                                    list.get(0).getObjectId());
-
-                                            eventId = list.get(0).getObjectId();
-
-                                            // Send a request to each added participant.
-                                            for (int i = 0; i < eventParticipants.size(); i++) {
-                                                ParseObject request = new
-                                                        ParseObject("EventRequest");
-                                                request.put("requestFrom",
-                                                        ParseUser.getCurrentUser().getObjectId());
-                                                request.put("requestTo",
-                                                        eventParticipants.get(i));
-                                                request.put("action", "add");
-                                                request.put("status", "pending");
-                                                request.put("eventId", eventId);
-                                                ParseACL newACL = new ParseACL();
-                                                newACL.setPublicReadAccess(true);
-                                                newACL.setPublicWriteAccess(true);
-                                                request.setACL(newACL);
-                                                request.saveInBackground();
-                                            }
-
-                                            ParseUser.getCurrentUser().saveInBackground(
-                                                    new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            if (e == null) {
-                                                                Intent intent = new Intent(
-                                                                        EventCreateActivity.this,
-                                                                        YelpDataActivity.class);
-                                                                intent.putExtra("eventId",
-                                                                        eventId);
-                                                                intent.putExtra("businessType",
-                                                                        bus);
-                                                                intent.putExtra("location",
-                                                                        loc);
-                                                                startActivity(intent);
-                                                                finish();
-                                                            }
-                                                        }
-                                                    });
-                                        }
-                                    }
-                                });
                                 */
+
                             }
                         }
                     });
-                    /*
-                    // Create the event/set all parameters for the event.
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                    query.whereEqualTo("eventName", nameOfEvent);
-                    query.getFirstInBackground(new GetCallback<ParseObject>() {
-                        @Override
-                        public void done(ParseObject parseObject, ParseException e) {
-                            if (parseObject == null) {
-                                ParseObject event = new ParseObject("Event");
-                                event.put("eventName", nameOfEvent);
-                                event.put("eventOwner", ParseUser.getCurrentUser().getObjectId());
-
-                                event.addAll("eventParticipants", eventParticipants);
-                                event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
-
-                                for (int i = 0; i < 10; i++) {
-                                    votes.add(0);
-                                }
-                                event.addAll("votes", votes);
-
-                                ParseACL newACL = new ParseACL();
-                                newACL.setPublicReadAccess(true);
-                                newACL.setPublicWriteAccess(true);
-                                event.setACL(newACL);
-                                event.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                            query.whereEqualTo("eventName", nameOfEvent);
-                                            query.findInBackground(new FindCallback<ParseObject>() {
-                                                @Override
-                                                public void done(List<ParseObject> list, ParseException e) {
-                                                    if (e == null) {
-                                                        // Add event to current user.
-                                                        ParseUser.getCurrentUser().add("eventsList",
-                                                                list.get(0).getObjectId());
-
-                                                        eventId = list.get(0).getObjectId();
-
-                                                        // Send a request to each added participant.
-                                                        for (int i = 0; i < eventParticipants.size(); i++) {
-                                                            ParseObject request = new
-                                                                    ParseObject("EventRequest");
-                                                            request.put("requestFrom",
-                                                                    ParseUser.getCurrentUser().getObjectId());
-                                                            request.put("requestTo",
-                                                                    eventParticipants.get(i));
-                                                            request.put("action", "add");
-                                                            request.put("status", "pending");
-                                                            request.put("eventId", eventId);
-                                                            ParseACL newACL = new ParseACL();
-                                                            newACL.setPublicReadAccess(true);
-                                                            newACL.setPublicWriteAccess(true);
-                                                            request.setACL(newACL);
-                                                            request.saveInBackground();
-                                                        }
-
-                                                        ParseUser.getCurrentUser().saveInBackground(
-                                                                new SaveCallback() {
-                                                            @Override
-                                                            public void done(ParseException e) {
-                                                                if (e == null) {
-                                                                    Intent intent = new Intent(
-                                                                            EventCreateActivity.this,
-                                                                            YelpDataActivity.class);
-                                                                    intent.putExtra("eventId",
-                                                                            eventId);
-                                                                    intent.putExtra("businessType",
-                                                                            bus);
-                                                                    intent.putExtra("location",
-                                                                            loc);
-                                                                    startActivity(intent);
-                                                                    finish();
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "Please enter a different name.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    */
                 }
             }
         });
