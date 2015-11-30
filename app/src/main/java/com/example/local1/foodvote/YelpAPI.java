@@ -54,6 +54,8 @@ public class YelpAPI extends AsyncTask<String, Void, String> {
     String [] results;
     String res = "TOMATO";
 
+    private static final String TAG = "YelpAPI";
+
     /**
      * Setup the Yelp API OAuth credentials.
      *
@@ -83,12 +85,22 @@ public class YelpAPI extends AsyncTask<String, Void, String> {
 
     /* The actual API Call process */
     @Override
-    protected String doInBackground(String...Locations){
+    protected String doInBackground(String...Parameters){
 
         Log.println(Log.ERROR, "YELPAPI:", "IN doInBackground!");
 
-        /* Search for Buisnesses in the passed city parameter */
-        String APIRes = searchForBusinessesByLocation("restuarant", Locations[0]);
+        String LocationType = Parameters[0];
+        String SearchParam = Parameters[1];
+        String Location = Parameters[2];
+
+        String APIRes = "";
+
+        if (LocationType.toLowerCase().equals("current")) {
+            APIRes = searchForBusinessesByCord(SearchParam, Location);
+        } else {
+            APIRes = searchForBusinessesByLocation(SearchParam, Location);
+        }
+
         Log.println(Log.ERROR, "YELPAPI:", "Search Passed!");
         /*
         Activity.runOnUiThread(new Runnable() {
@@ -126,6 +138,18 @@ public class YelpAPI extends AsyncTask<String, Void, String> {
         return res;
     }
 
+    public String searchForBusinessesByCord(String term, String location) {
+        Log.println(Log.ERROR, "YELPAPI:", "IN searchForBuisnessByCord!");
+        OAuthRequest request = createOAuthRequest(SEARCH_PATH);
+        Log.println(Log.ERROR, "YELPAPI:", "Made OAuthRequest!");
+        request.addQuerystringParameter("term", term);
+        request.addQuerystringParameter("ll", location);
+        //request.addQuerystringParameter("location", location);
+        request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
+        Log.println(Log.ERROR, "YELPAPI:", "Passed searchForBuisnessByLocation!");
+        return sendRequestAndGetResponse(request);
+    }
+
 
     /**
      * Creates and sends a request to the Search API by term and location.
@@ -142,7 +166,7 @@ public class YelpAPI extends AsyncTask<String, Void, String> {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         Log.println(Log.ERROR, "YELPAPI:", "Made OAuthRequest!");
         request.addQuerystringParameter("term", term);
-        request.addQuerystringParameter("ll", location);
+        request.addQuerystringParameter("location", location);
         //request.addQuerystringParameter("location", location);
         request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
         Log.println(Log.ERROR, "YELPAPI:", "Passed searchForBuisnessByLocation!");

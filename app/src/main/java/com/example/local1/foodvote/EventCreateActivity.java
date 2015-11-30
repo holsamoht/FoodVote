@@ -37,28 +37,35 @@ import org.json.simple.parser.JSONParser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventCreateActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class EventCreateActivity extends AppCompatActivity /* implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener */ {
 
     // Variables
     String nameOfEvent;
     String bus;
     String loc;
     String[] noFriends = {"You currently have no friends."};
+
+    /*
     String mLatitudeText;
     String mLongitudeText;
+    */
     String eventId;
 
+    /*
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     YelpAPI yAPI;
+    */
 
     List<Boolean> clicked = new ArrayList<Boolean>();
     List<Integer> votes = new ArrayList<Integer>();
     List<String> userFriendIDs = new ArrayList<String>();
     List<String> userFriends = new ArrayList<String>();
     List<String> eventParticipants = new ArrayList<String>();
+    /*
     List<String> restaurants = new ArrayList<String>();
+    */
 
     // Widgets
     Button createButton;
@@ -72,11 +79,13 @@ public class EventCreateActivity extends AppCompatActivity implements
     //RunVariable
     boolean isSetUp = false;
 
+    /*
     // YELP API keys
     private static final String CONSUMER_KEY = "FQFe1MpY3PGvxKy-Aq702g";
     private static final String CONSUMER_SECRET = "u_ifYEaonk6W5sf24SCXiGPKx6I";
     private static final String TOKEN = "6YSX1I448VpE2WQ1rrQv0NJRNJ9E9rOX";
     private static final String TOKEN_SECRET = "_iN4GhZsdgojn1WYZTHOi-q2jzM";
+    */
 
     // TAG
     private static final String TAG = "EventCreateActivity ";
@@ -98,10 +107,13 @@ public class EventCreateActivity extends AppCompatActivity implements
             cancelEvent();
 
             isSetUp = true;
+            /*
             mGoogleApiClient.connect();
+            */
         }
     }
 
+    /*
     public void onConnected(Bundle bundle) {
         loc = location.getText().toString();
 
@@ -130,7 +142,9 @@ public class EventCreateActivity extends AppCompatActivity implements
             mGoogleApiClient.disconnect();
         }
     }
+    */
 
+    /*
     @Override
     public void onConnectionSuspended(int x) {
         Log.e(TAG, "In onConnectionSuspended().");
@@ -138,7 +152,9 @@ public class EventCreateActivity extends AppCompatActivity implements
 
         Toast.makeText(getApplicationContext(), "Connection suspended.", Toast.LENGTH_SHORT).show();
     }
+    */
 
+    /*
     @Override
     public void onConnectionFailed(ConnectionResult c) {
         Log.e(TAG, "In onConnectionFailed().");
@@ -146,6 +162,7 @@ public class EventCreateActivity extends AppCompatActivity implements
 
         Toast.makeText(getApplicationContext(), "Connection failed.", Toast.LENGTH_SHORT).show();
     }
+    */
 
     @Override
     public void onBackPressed() {
@@ -193,9 +210,12 @@ public class EventCreateActivity extends AppCompatActivity implements
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /*
         // Set yelpAPI keys.
         yAPI = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+        */
 
+        /*
         // Build googleAPI client.
         if (checkPlayServices()) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -204,10 +224,10 @@ public class EventCreateActivity extends AppCompatActivity implements
                     .addApi(LocationServices.API)
                     .build();
         }
+        */
     }
 
     private void selectUserFriends() {
-
         try {
             // Get a list of user IDs from current user's friends list.
             userFriendIDs = ParseUser.getCurrentUser().getList("friendsList");
@@ -271,12 +291,12 @@ public class EventCreateActivity extends AppCompatActivity implements
     }
 
     private void createEvent() {
-        Log.e(TAG, "In createEvent().");
-
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nameOfEvent = eventName.getText().toString();
+                bus = typeOfBusiness.getText().toString();
+                loc = location.getText().toString();
 
                 if (nameOfEvent.equals("")) {
                     Toast.makeText(getApplicationContext(), "Please enter name of event.",
@@ -296,7 +316,9 @@ public class EventCreateActivity extends AppCompatActivity implements
                                 event.addAll("eventParticipants", eventParticipants);
                                 event.add("eventParticipants", ParseUser.getCurrentUser().getObjectId());
 
+                                /*
                                 event.addAll("restaurants", restaurants);
+                                */
 
                                 for (int i = 0; i < 10; i++) {
                                     votes.add(0);
@@ -348,9 +370,13 @@ public class EventCreateActivity extends AppCompatActivity implements
                                                                 if (e == null) {
                                                                     Intent intent = new Intent(
                                                                             EventCreateActivity.this,
-                                                                            EventVoteActivity.class);
+                                                                            YelpDataActivity.class);
                                                                     intent.putExtra("eventId",
                                                                             eventId);
+                                                                    intent.putExtra("businessType",
+                                                                            bus);
+                                                                    intent.putExtra("location",
+                                                                            loc);
                                                                     startActivity(intent);
                                                                     finish();
                                                                 }
@@ -385,6 +411,7 @@ public class EventCreateActivity extends AppCompatActivity implements
         });
     }
 
+    /*
     // Method gets the API call in JSON format.
     public String setUpAPIRet(YelpAPI yelp, String location) {
         Log.e(TAG, "In setUpAPIRet");
@@ -402,8 +429,9 @@ public class EventCreateActivity extends AppCompatActivity implements
         Log.e(TAG, "Result = " + ret);
         return ret;
     }
+    */
 
-
+    /*
     public void parseAndDisplayRestaurantOutput(final String yelpJSON) {
         Log.e(TAG, "In parseAndDisplayRestaurantOutput");
 
@@ -456,8 +484,9 @@ public class EventCreateActivity extends AppCompatActivity implements
         restaurants.add(R9);
         restaurants.add(R10);
     }
+    */
 
-
+    /*
     // Method to verify google play services on the device.
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
@@ -478,4 +507,5 @@ public class EventCreateActivity extends AppCompatActivity implements
 
         return true;
     }
+    */
 }
