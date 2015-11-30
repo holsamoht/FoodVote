@@ -54,7 +54,8 @@
             android:textAlignment="textStart"
             android:gravity="start"
             android:layout_alignBottom="@+id/count1"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -69,7 +70,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -84,7 +86,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -99,7 +102,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -114,7 +118,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -129,7 +134,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -144,7 +150,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -159,7 +166,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -174,7 +182,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <Button
             android:layout_height="wrap_content"
@@ -189,7 +198,8 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentRight="true"
             android:textAlignment="textStart"
-            android:gravity="start" />
+            android:gravity="start"
+            android:textAllCaps="false"/>
 
         <TextView
             android:layout_width="50dip"

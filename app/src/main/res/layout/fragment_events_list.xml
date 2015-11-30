@@ -33,23 +33,23 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
-        android:layout_width="200dp"
-        android:layout_height="55dp"
-        android:id="@+id/editText"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/fab"
-        android:background="@null"
-        android:hint="Click me to create a new Event!" />
-
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
-        android:layout_above="@+id/eventsList"
-        android:layout_alignParentStart="true"
+        android:id="@+id/textView"
+        android:layout_alignTop="@+id/fab"
+        android:layout_toEndOf="@+id/fab"
+        android:textSize="20dp"
+        android:hint="Click me to create a new Event!" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Your Events"
-        android:background="@null"
-        android:textSize="25dp" />
+        android:id="@+id/textView2"
+        android:layout_above="@+id/eventsList"
+        android:layout_alignStart="@+id/eventsList"
+        android:textSize="25dp"
+        android:textColor="#080000" />
 
 </RelativeLayout>

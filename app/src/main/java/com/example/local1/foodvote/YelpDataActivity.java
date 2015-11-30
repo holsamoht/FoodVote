@@ -68,7 +68,7 @@ public class YelpDataActivity extends AppCompatActivity implements
                 mGoogleApiClient);
 
         if (loc.toLowerCase().equals("current location")) {
-            /*
+
             // Use if developing on an android phone.
             if (mLastLocation != null) {
                 mLatitudeText = String.valueOf(mLastLocation.getLatitude());
@@ -78,8 +78,8 @@ public class YelpDataActivity extends AppCompatActivity implements
                 parseAndDisplayRestaurantOutput(YelpJSON);
                 mGoogleApiClient.disconnect();
             }
-            */
 
+            /*
             // Use if developing on an emulator.
             if (mLastLocation == null) {
                 mLatitudeText = "32.8810";
@@ -89,6 +89,8 @@ public class YelpDataActivity extends AppCompatActivity implements
                 parseAndDisplayRestaurantOutput(YelpJSON);
                 mGoogleApiClient.disconnect();
             }
+
+            */
         }
 
         else{
