@@ -119,11 +119,11 @@ public class EventCreateActivity extends AppCompatActivity {
         setContentView(R.layout.event_create);
 
         // Find widgets from event_create.xml.
-        createButton = (Button) findViewById(R.id.createButton);
-        cancelButton = (Button) findViewById(R.id.cancelButton);
-        eventName = (EditText) findViewById(R.id.eventName);
-        typeOfBusiness = (EditText) findViewById(R.id.typeOfBusiness);
-        location = (EditText) findViewById(R.id.location);
+        createButton = (Button) findViewById(R.id.createEventButton);
+        cancelButton = (Button) findViewById(R.id.cancelEventButton);
+        eventName = (EditText) findViewById(R.id.eventNameText);
+        typeOfBusiness = (EditText) findViewById(R.id.typeOfBusinessText);
+        location = (EditText) findViewById(R.id.locationText);
         listFriends = (ListView) findViewById(R.id.friendsList);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -36,32 +36,32 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/eventName"
+        android:id="@+id/eventNameText"
         android:hint="e.g. event name"
         android:layout_below="@+id/view"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:singleLine="true"
-        android:nextFocusDown="@+id/typeOfBusiness"
+        android:nextFocusDown="@+id/typeOfBusinessText"
         android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/typeOfBusiness"
-        android:layout_below="@+id/eventName"
+        android:id="@+id/typeOfBusinessText"
+        android:layout_below="@+id/eventNameText"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:hint="e.g. restaurants, japanese, mexican, etc"
         android:singleLine="true"
-        android:nextFocusDown="@+id/location"
+        android:nextFocusDown="@+id/locationText"
         android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/location"
-        android:layout_below="@+id/typeOfBusiness"
+        android:id="@+id/locationText"
+        android:layout_below="@+id/typeOfBusinessText"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:singleLine="true"
@@ -76,7 +76,7 @@
         android:textSize="25dp"
         android:textColor="#050000"
         android:layout_marginTop="35dp"
-        android:layout_below="@+id/location"
+        android:layout_below="@+id/locationText"
         android:layout_alignParentStart="true" />
 
     <ListView
@@ -84,7 +84,7 @@
         android:layout_height="200dip"
         android:id="@+id/friendsList"
         android:focusable="false"
-        android:layout_above="@+id/createButton"
+        android:layout_above="@+id/createEventButton"
         android:layout_below="@+id/friendsHeader"
         android:layout_alignStart="@+id/friendsHeader"
         android:layout_alignParentEnd="true" />
@@ -93,9 +93,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create"
-        android:id="@+id/createButton"
+        android:id="@+id/createEventButton"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/cancelButton"
+        android:layout_toStartOf="@+id/cancelEventButton"
         android:layout_marginEnd="56dp"
         android:textAllCaps="false"/>
 
@@ -103,7 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
-        android:id="@+id/cancelButton"
+        android:id="@+id/cancelEventButton"
         android:layout_marginLeft="25dp"
         android:layout_marginEnd="79dp"
         android:layout_alignParentBottom="true"

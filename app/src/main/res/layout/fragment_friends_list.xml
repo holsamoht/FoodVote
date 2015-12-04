@@ -25,26 +25,26 @@
         android:textColor="#030101"
         android:textSize="25dp"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/addFriend" />
+        android:layout_alignStart="@+id/addFriendText" />
 
     <EditText
         android:layout_width="200dip"
         android:layout_height="wrap_content"
-        android:id="@+id/addFriend"
+        android:id="@+id/addFriendText"
         android:hint="Enter in a username"
         android:layout_below="@+id/addFriendHeader"
         android:layout_alignParentStart="true"
         android:layout_marginStart="35dp"
         android:singleLine="true" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/addButton"
+    <android.support.design.widget.FloatingActionButton android:id="@+id/addFriendButton"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="#08EBD1"
         android:tint="#FFFFFF"
         android:layout_above="@+id/friendsListHeader"
-        android:layout_toEndOf="@+id/addFriend"
+        android:layout_toEndOf="@+id/addFriendText"
         android:layout_marginStart="36dp" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:background="@null"
         android:textColor="#040000"
         android:textSize="25dp"
-        android:layout_below="@+id/addFriend"
+        android:layout_below="@+id/addFriendText"
         android:layout_alignEnd="@+id/addFriendHeader" />
 
     <ListView
@@ -67,8 +67,8 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/friendsListHeader"
         android:background="#ffffff"
-        android:layout_alignStart="@+id/addFriend"
-        android:layout_toStartOf="@+id/addButton"
-        android:layout_alignEnd="@+id/addButton" />
+        android:layout_alignStart="@+id/addFriendText"
+        android:layout_toStartOf="@+id/addFriendButton"
+        android:layout_alignEnd="@+id/addFriendButton" />
 
 </RelativeLayout>

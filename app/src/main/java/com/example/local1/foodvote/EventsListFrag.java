@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -71,7 +70,7 @@ public class EventsListFrag extends Fragment {
         if(setUp == false) {
             // Locate widgets.
             listEvents = (ListView) getView().findViewById(R.id.eventsList);
-            addButton = (FloatingActionButton) getView().findViewById(R.id.fab);
+            addButton = (FloatingActionButton) getView().findViewById(R.id.addEventButton);
 
             listUserEvents();
             addEvent();

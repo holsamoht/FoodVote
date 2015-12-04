@@ -61,8 +61,8 @@ public class FriendsListFrag extends Fragment {
 
         if(SetUp == false) {
             // Locate widget views in friends_list.xml
-            enteredInUsername = (EditText) getActivity().findViewById(R.id.addFriend);
-            addFriendButton = (FloatingActionButton) getActivity().findViewById(R.id.addButton);
+            enteredInUsername = (EditText) getActivity().findViewById(R.id.addFriendText);
+            addFriendButton = (FloatingActionButton) getActivity().findViewById(R.id.addFriendButton);
             friendsList = (ListView) getActivity().findViewById(R.id.friendsList);
 
             addFriend();
