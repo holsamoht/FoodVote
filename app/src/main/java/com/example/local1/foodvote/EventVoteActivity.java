@@ -57,6 +57,7 @@ public class EventVoteActivity extends AppCompatActivity {
         restaurantClicked();
     }
 
+    /* go back to FragmentContainer on back button */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -128,13 +129,16 @@ public class EventVoteActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // find the event in Parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         query.whereEqualTo("objectId", eventId);
         try {
             List<ParseObject> list = query.find();
 
+            // get the list of votes and the list of restaurants
             voteCounts = list.get(0).getList("votes");
             restaurantNames = list.get(0).getList("restaurants");
+
 
             for (int i = 0; i < voteCounts.size(); i++) {
                 count[i] = voteCounts.get(i);
@@ -144,6 +148,7 @@ public class EventVoteActivity extends AppCompatActivity {
         }
     }
 
+    // update the view with the votes currently stored in Parse
     private void listEventVotes() {
         Log.e(TAG, "In listEventVotes().");
 
@@ -159,6 +164,7 @@ public class EventVoteActivity extends AppCompatActivity {
         c10.setText(String.valueOf(voteCounts.get(9)));
     }
 
+    // update the view with the restaurant names stored in Parse
     private void listEventRestaurants() {
         Log.e(TAG, "In listEventRestaurants().");
 
@@ -174,28 +180,41 @@ public class EventVoteActivity extends AppCompatActivity {
         b10.setText(restaurantNames.get(9));
     }
 
+    /*
+     * for each vote button:
+     *   when the button is clicked, find the Vote object with the user's id and the event id
+     *   
+    */
     public void restaurantClicked() {
         c1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // find the first Vote object with the user's id and the event id
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
                 query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
                 query.whereEqualTo("eventId", eventId);
                 query.getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject parseObject, ParseException e) {
+                        // if such a Vote object doesn't exist yet, that means the user has not voted on
+                        // this Event yet
                         if (parseObject == null) {
+                            // get the event
                             ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                             query.whereEqualTo("objectId", eventId);
                             query.findInBackground(new FindCallback<ParseObject>() {
                                 @Override
                                 public void done(List<ParseObject> list, ParseException e) {
                                     if (e == null) {
+                                        // create a new Vote object and save the userId, eventId, and 
+                                        // list of restaurants
                                         ParseObject vote = new ParseObject("Vote");
                                         vote.put("userId", ParseUser.getCurrentUser().getObjectId());
                                         vote.put("eventId", eventId);
                                         vote.put("restaurant", restaurantNames.get(0));
                                         vote.saveInBackground();
+                                        // now update the votes array in the event
+                                        // first remove all the current votes
                                         tempList = list;
                                         tempList.get(0).removeAll("votes", voteCounts);
                                         tempList.get(0).saveInBackground(new SaveCallback() {
@@ -206,8 +225,10 @@ public class EventVoteActivity extends AppCompatActivity {
                                                 Toast.makeText(getApplicationContext(),
                                                         "Restaurant voted.",
                                                         Toast.LENGTH_SHORT).show();
+                                                // now update the vote number for the respective restaurant
                                                 voteCounts.remove(0);
                                                 voteCounts.add(0, count[0]);
+                                                // now save it back into the Event object
                                                 tempList.get(0).addAll("votes", voteCounts);
                                                 tempList.get(0).saveInBackground();
                                             }
@@ -215,7 +236,11 @@ public class EventVoteActivity extends AppCompatActivity {
                                     }
                                 }
                             });
-                        } else if (parseObject != null) {
+                        } 
+                        // if such a Vote object exists, the user has already voted, so either delete
+                        // their vote or change their vote 
+                        else if (parseObject != null) {
+                            // get the Vote object that matches the userId, eventId, and restaurant
                             ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
                             query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
                             query.whereEqualTo("eventId", eventId);
@@ -223,12 +248,20 @@ public class EventVoteActivity extends AppCompatActivity {
                             query.getFirstInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject parseObject, ParseException e) {
+                                    // if such a Vote object was not found, then the user's vote must be
+                                    // currently registered for a different restaurant
                                     if (parseObject == null) {
                                         Toast.makeText(getApplicationContext(),
                                                 "You have already voted.",
                                                 Toast.LENGTH_SHORT).show();
-                                    } else {
+                                    } 
+                                    // otherwise their vote is registered for the same restaurant whose
+                                    // count button they clicked on, so undo the vote
+                                    else {
+                                        // unvote
                                         parseObject.deleteInBackground();
+                                        // now decrement the number of votes for that restaurant in the 
+                                        // event's votes array
                                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                                         query.whereEqualTo("objectId", eventId);
                                         query.findInBackground(new FindCallback<ParseObject>() {
@@ -240,6 +273,7 @@ public class EventVoteActivity extends AppCompatActivity {
                                                     tempList.get(0).saveInBackground(new SaveCallback() {
                                                         @Override
                                                         public void done(ParseException e) {
+                                                            // decrementing vote
                                                             count[0]--;
                                                             c1.setText(String.valueOf(count[0]));
                                                             Toast.makeText(getApplicationContext(),
@@ -1065,6 +1099,8 @@ public class EventVoteActivity extends AppCompatActivity {
             }
         });
 
+        /* when a user clicks on a restaurant's name, show ExtraYelpInformationActivity with that 
+        respective restaurant's info */
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -43,6 +43,7 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
         }
     }
 
+    /* go back to voting page on back button*/
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -85,6 +86,7 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // initialize TextView variables
         restaurantName = (TextView)findViewById(R.id.restaurantName);
         rating = (TextView)findViewById(R.id.rating);
         type = (TextView)findViewById(R.id.type);
@@ -93,15 +95,19 @@ public class ExtraYelpInformationActivity extends AppCompatActivity {
     }
 
     private void displayInfo(){
+        // get the info that was passed in from EventVoteActivity
         String eventId = getIntent().getExtras().getString("eventId");
         position = getIntent().getExtras().getInt("position");
 
+        // find the Event in Parse to grab info from
         ParseQuery<ParseObject>query = ParseQuery.getQuery("Event");
         query.whereEqualTo("objectId", eventId);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if(e == null){
+                    // set the text on the page to the information for that restaurant
+                    // that is stored in Parse
                     ParseObject obj = list.get(0);
                     restaurantName.setText((String)obj.getList("restaurants").get(position));
                     rating.setText((String)obj.getList("ratings").get(position));
