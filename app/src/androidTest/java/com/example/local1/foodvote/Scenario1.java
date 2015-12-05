@@ -9,6 +9,7 @@ import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
+import android.widget.EditText;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -74,40 +75,32 @@ public class Scenario1 extends ActivityInstrumentationTestCase2<LoginSignUpActiv
      * When     I swipe left, enter a friend's username, and click the "+" button
      * Then     My friend will be added to my friends list.
      */
-    public void testA() {
-        onView(withId(R.id.usernameText))
-                .perform(typeText("a"), closeSoftKeyboard());
-        onView(withId(R.id.passwordText))
-                .perform(typeText("1234"), closeSoftKeyboard());
-        onView(withId(R.id.signUpButton)).perform(click());
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Thread.sleep(1000) interrupted.");
-        }
 
-        onView(withId(R.id.loginButton)).perform(click());
+    /** Scenario1
+     * Given    I have an account
+     * And      I am logged in
+     * And      I am on the friends List fragment
+     * And      I have a friend with a FoodVote account I already added
+     * When     I enter the friend's username
+     * And      I click the "+" button
+     * Then     My friend will not be added to my friends list.
+     */
+    public void testA() throws Exception{
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Thread.sleep(1000) interrupted.");
-        }
+        String un = "a";
+        String pswd = "1234";
+        Tester t = new Tester("Output.txt");
 
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.addFriendText)).perform(typeText("b"), closeSoftKeyboard());
-        onView(withId(R.id.addFriendButton)).perform(click());
+        t.login(un, pswd);
+        t.checkLogin(un);
+
+
+        int currentSize = t.addFriend("b");
+        t.checkFriendAdded("b", currentSize);
+
+
     }
 
-    /*
-    public void testB(){
-        onView(withId(R.id.usernameText))
-                .perform(typeText("a"), closeSoftKeyboard());
-        onView(withId(R.id.passwordText))
-                .perform(typeText("1234"), closeSoftKeyboard());
-        onView(withId(R.id.loginButton)).perform(click());
-    }
-    */
 }
 

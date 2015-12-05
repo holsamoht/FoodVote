@@ -15,6 +15,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+
 public class LoginSignUpActivity extends AppCompatActivity {
     // Variables
     String usernameText;
@@ -25,6 +26,10 @@ public class LoginSignUpActivity extends AppCompatActivity {
     Button signUpButton;
     EditText password;
     EditText username;
+
+    //TestVariables
+    public boolean loginRetChanged = false;
+    public int loginRet = 35;
 
     // Log TAG
     private static final String TAG = "LoginSignUpActivity ";
@@ -71,9 +76,13 @@ public class LoginSignUpActivity extends AppCompatActivity {
                 usernameText = username.getText().toString();
                 passwordText = password.getText().toString();
 
+
+                int loginSuccess = parseLogin(usernameText, passwordText);
+                Log.e(TAG, loginSuccess + "");
+
                 // If username or password is not entered, display message to enter in info; else,
                 // try to log user in.
-                if (usernameText.equals("") || passwordText.equals("")) {
+                /*if (usernameText.equals("") || passwordText.equals("")) {
                     Toast.makeText(getApplicationContext(), "Please enter in username and password",
                             Toast.LENGTH_SHORT).show();
                 } else {
@@ -95,9 +104,44 @@ public class LoginSignUpActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }
+                }*/
             }
         });
+    }
+
+    public int parseLogin(String usernameText, String passwordText){
+        // If username or password is not entered, display message to enter in info; else,
+        // try to log user in.
+        if (usernameText.equals("") || passwordText.equals("")) {
+            Toast.makeText(getApplicationContext(), "Please enter in username and password",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            ParseUser.logInInBackground(usernameText, passwordText, new LogInCallback() {
+                @Override
+                public void done(ParseUser parseUser, ParseException e) {
+                    if (parseUser == null) {
+                        Toast.makeText(getApplicationContext(),
+                                "Username or password is wrong, please try again.",
+                                Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Logged in.",
+                                Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginSignUpActivity.this,
+                                FragmentContainer.class);
+                        startActivity(intent);
+                        finish();
+                        loginRet = 1;
+                        Log.e(TAG, "inside: " + loginRet);
+                        loginRetChanged = true;
+                    }
+                }
+            });
+        }
+
+        Log.e(TAG, "outside: " + loginRet);
+        return loginRet;
+
     }
 
     /**
