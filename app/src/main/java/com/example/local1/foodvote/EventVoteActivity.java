@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -26,6 +25,7 @@ import java.util.List;
 public class EventVoteActivity extends AppCompatActivity {
     // Variables
     int[] count = new int[10];
+    int index;
     static String eventId;
     List<Integer> voteCounts = new ArrayList<Integer>();
     List<String> restaurantNames = new ArrayList<String>();
@@ -33,7 +33,7 @@ public class EventVoteActivity extends AppCompatActivity {
 
     // Widgets
     Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
-    Button c1, c2, c3, c4, c5, c6, c7, c8, c9, c10;
+    Button c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, cn;
     Toolbar toolbar;
 
     // TAG
@@ -143,7 +143,7 @@ public class EventVoteActivity extends AppCompatActivity {
             for (int i = 0; i < voteCounts.size(); i++) {
                 count[i] = voteCounts.get(i);
             }
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             Log.e(TAG, "Unable to find event.");
         }
     }
@@ -180,1046 +180,289 @@ public class EventVoteActivity extends AppCompatActivity {
         b10.setText(restaurantNames.get(9));
     }
 
-    /*
-     * for each vote button:
-     *   when the button is clicked, find the Vote object with the user's id and the event id
-     *   
-    */
     public void restaurantClicked() {
+        /* when the user clicks on a voting button, handle the vote actions for that button */
         c1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // find the first Vote object with the user's id and the event id
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        // if such a Vote object doesn't exist yet, that means the user has not voted on
-                        // this Event yet
-                        if (parseObject == null) {
-                            // get the event
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        // create a new Vote object and save the userId, eventId, and 
-                                        // list of restaurants
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(0));
-                                        vote.saveInBackground();
-                                        // now update the votes array in the event
-                                        // first remove all the current votes
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[0]++;
-                                                c1.setText(String.valueOf(count[0]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                // now update the vote number for the respective restaurant
-                                                voteCounts.remove(0);
-                                                voteCounts.add(0, count[0]);
-                                                // now save it back into the Event object
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } 
-                        // if such a Vote object exists, the user has already voted, so either delete
-                        // their vote or change their vote 
-                        else if (parseObject != null) {
-                            // get the Vote object that matches the userId, eventId, and restaurant
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(0));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    // if such a Vote object was not found, then the user's vote must be
-                                    // currently registered for a different restaurant
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } 
-                                    // otherwise their vote is registered for the same restaurant whose
-                                    // count button they clicked on, so undo the vote
-                                    else {
-                                        // unvote
-                                        parseObject.deleteInBackground();
-                                        // now decrement the number of votes for that restaurant in the 
-                                        // event's votes array
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            // decrementing vote
-                                                            count[0]--;
-                                                            c1.setText(String.valueOf(count[0]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(0);
-                                                            voteCounts.add(0, count[0]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c1;
+                index = 0;
+                handleVote();
             }
         });
 
         c2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(1));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[1]++;
-                                                c2.setText(String.valueOf(count[1]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(1);
-                                                voteCounts.add(1, count[1]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(1));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[1]--;
-                                                            c2.setText(String.valueOf(count[1]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(1);
-                                                            voteCounts.add(1, count[1]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c2;
+                index = 1;
+                handleVote();
             }
         });
 
         c3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(2));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[2]++;
-                                                c3.setText(String.valueOf(count[2]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(2);
-                                                voteCounts.add(2, count[2]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(2));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[2]--;
-                                                            c3.setText(String.valueOf(count[2]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(2);
-                                                            voteCounts.add(2, count[2]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c3;
+                index = 2;
+                handleVote();
             }
         });
 
         c4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(3));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[3]++;
-                                                c4.setText(String.valueOf(count[3]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(3);
-                                                voteCounts.add(3, count[3]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(3));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[3]--;
-                                                            c4.setText(String.valueOf(count[3]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(3);
-                                                            voteCounts.add(3, count[3]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c4;
+                index = 3;
+                handleVote();
             }
         });
 
         c5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(4));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[4]++;
-                                                c5.setText(String.valueOf(count[4]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(4);
-                                                voteCounts.add(4, count[4]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(4));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[4]--;
-                                                            c5.setText(String.valueOf(count[4]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(4);
-                                                            voteCounts.add(4, count[4]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c5;
+                index = 4;
+                handleVote();
             }
         });
 
         c6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(5));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[5]++;
-                                                c6.setText(String.valueOf(count[5]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(5);
-                                                voteCounts.add(5, count[5]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(5));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[5]--;
-                                                            c6.setText(String.valueOf(count[5]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(5);
-                                                            voteCounts.add(5, count[5]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c6;
+                index = 5;
+                handleVote();
             }
         });
 
         c7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(6));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[6]++;
-                                                c7.setText(String.valueOf(count[6]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(6);
-                                                voteCounts.add(6, count[6]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(6));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[6]--;
-                                                            c7.setText(String.valueOf(count[6]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(6);
-                                                            voteCounts.add(6, count[6]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c7;
+                index = 6;
+                handleVote();
             }
         });
 
         c8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(7));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[7]++;
-                                                c8.setText(String.valueOf(count[7]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(7);
-                                                voteCounts.add(7, count[7]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(7));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[7]--;
-                                                            c8.setText(String.valueOf(count[7]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(7);
-                                                            voteCounts.add(7, count[7]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c8;
+                index = 7;
+                handleVote();
             }
         });
 
         c9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(8));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[8]++;
-                                                c9.setText(String.valueOf(count[8]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(8);
-                                                voteCounts.add(8, count[8]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(8));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[8]--;
-                                                            c9.setText(String.valueOf(count[8]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(8);
-                                                            voteCounts.add(8, count[8]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c9;
+                index = 8;
+                handleVote();
             }
         });
 
         c10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                query.whereEqualTo("eventId", eventId);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject parseObject, ParseException e) {
-                        if (parseObject == null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                            query.whereEqualTo("objectId", eventId);
-                            query.findInBackground(new FindCallback<ParseObject>() {
-                                @Override
-                                public void done(List<ParseObject> list, ParseException e) {
-                                    if (e == null) {
-                                        ParseObject vote = new ParseObject("Vote");
-                                        vote.put("userId", ParseUser.getCurrentUser().getObjectId());
-                                        vote.put("eventId", eventId);
-                                        vote.put("restaurant", restaurantNames.get(9));
-                                        vote.saveInBackground();
-                                        tempList = list;
-                                        tempList.get(0).removeAll("votes", voteCounts);
-                                        tempList.get(0).saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                count[9]++;
-                                                c10.setText(String.valueOf(count[9]));
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Restaurant voted.",
-                                                        Toast.LENGTH_SHORT).show();
-                                                voteCounts.remove(9);
-                                                voteCounts.add(9, count[9]);
-                                                tempList.get(0).addAll("votes", voteCounts);
-                                                tempList.get(0).saveInBackground();
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (parseObject != null) {
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
-                            query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
-                            query.whereEqualTo("eventId", eventId);
-                            query.whereEqualTo("restaurant", restaurantNames.get(9));
-                            query.getFirstInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject parseObject, ParseException e) {
-                                    if (parseObject == null) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "You have already voted.",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        parseObject.deleteInBackground();
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                        query.whereEqualTo("objectId", eventId);
-                                        query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                if (e == null) {
-                                                    tempList = list;
-                                                    tempList.get(0).removeAll("votes", voteCounts);
-                                                    tempList.get(0).saveInBackground(new SaveCallback() {
-                                                        @Override
-                                                        public void done(ParseException e) {
-                                                            count[9]--;
-                                                            c10.setText(String.valueOf(count[9]));
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Restaurant unvoted.",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            voteCounts.remove(9);
-                                                            voteCounts.add(9, count[9]);
-                                                            tempList.get(0).addAll("votes",
-                                                                    voteCounts);
-                                                            tempList.get(0).saveInBackground();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                cn = c10;
+                index = 9;
+                handleVote();
             }
         });
 
-        /* when a user clicks on a restaurant's name, show ExtraYelpInformationActivity with that 
+        /* when a user clicks on a restaurant's name, show ExtraYelpInformationActivity with that
         respective restaurant's info */
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 0);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 0);
             }
         });
 
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 1);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 1);
             }
         });
 
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 2);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 2);
             }
         });
 
         b4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 3);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 3);
             }
         });
 
         b5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 4);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 4);
             }
         });
 
         b6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 5);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 5);
             }
         });
 
         b7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 6);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 6);
             }
         });
 
         b8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 7);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 7);
             }
         });
 
         b9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 8);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 8);
             }
         });
 
         b10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
-                intent.putExtra("eventId", eventId);
-                intent.putExtra("position", 9);
-                startActivity(intent);
-                finish();
+                goToExtraYelpInformationActivity(eventId, 9);
             }
         });
 
+    }
+
+    /* handles a user voting for the first time, voting for a different restaurant while they currently
+     * have a vote stored, and unvoting */
+    public void handleVote() {
+        // find the first Vote object with the user's id and the event id
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
+        query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
+        query.whereEqualTo("eventId", eventId);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                // if such a Vote object doesn't exist yet, that means the user has not voted on
+                // this Event yet
+                if (parseObject == null) {
+                    // get the event
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                    query.whereEqualTo("objectId", eventId);
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> list, ParseException e) {
+                            if (e == null) {
+                                // create a new Vote object and save the userId, eventId, and
+                                // list of restaurants
+                                ParseObject vote = new ParseObject("Vote");
+                                vote.put("userId", ParseUser.getCurrentUser().getObjectId());
+                                vote.put("eventId", eventId);
+                                vote.put("restaurant", restaurantNames.get(index));
+                                vote.saveInBackground();
+                                // now update the votes array in the event
+                                // first remove all the current votes
+                                tempList = list;
+                                tempList.get(0).removeAll("votes", voteCounts);
+                                tempList.get(0).saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        count[index]++;
+                                        cn.setText(String.valueOf(count[index]));
+                                        Toast.makeText(getApplicationContext(),
+                                                "Restaurant voted.",
+                                                Toast.LENGTH_SHORT).show();
+                                        // now update the vote number for the respective restaurant
+                                        voteCounts.remove(index);
+                                        voteCounts.add(index, count[index]);
+                                        // now save it back into the Event object
+                                        tempList.get(0).addAll("votes", voteCounts);
+                                        tempList.get(0).saveInBackground();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                // if such a Vote object exists, the user has already voted, so either delete
+                // their vote or change their vote
+                else if (parseObject != null) {
+                    // get the Vote object that matches the userId, eventId, and restaurant
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Vote");
+                    query.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
+                    query.whereEqualTo("eventId", eventId);
+                    query.whereEqualTo("restaurant", restaurantNames.get(index));
+                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject parseObject, ParseException e) {
+                            // if such a Vote object was not found, then the user's vote must be
+                            // currently registered for a different restaurant
+                            if (parseObject == null) {
+                                Toast.makeText(getApplicationContext(),
+                                        "You have already voted.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            // otherwise their vote is registered for the same restaurant whose
+                            // count button they clicked on, so undo the vote
+                            else {
+                                // unvote
+                                parseObject.deleteInBackground();
+                                // now decrement the number of votes for that restaurant in the
+                                // event's votes array
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                query.whereEqualTo("objectId", eventId);
+                                query.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> list, ParseException e) {
+                                        if (e == null) {
+                                            tempList = list;
+                                            tempList.get(0).removeAll("votes", voteCounts);
+                                            tempList.get(0).saveInBackground(new SaveCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    // decrementing vote
+                                                    count[index]--;
+                                                    cn.setText(String.valueOf(count[index]));
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "Restaurant unvoted.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    voteCounts.remove(index);
+                                                    voteCounts.add(index, count[index]);
+                                                    tempList.get(0).addAll("votes",
+                                                            voteCounts);
+                                                    tempList.get(0).saveInBackground();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /* start the ExtraYelpInformationActivity intent after passing some variables */
+    public void goToExtraYelpInformationActivity(String eventIdParam, int position) {
+        Intent intent = new Intent(EventVoteActivity.this, ExtraYelpInformationActivity.class);
+        intent.putExtra("eventId", eventIdParam);
+        intent.putExtra("position", position);
+        startActivity(intent);
+        finish();
     }
 }

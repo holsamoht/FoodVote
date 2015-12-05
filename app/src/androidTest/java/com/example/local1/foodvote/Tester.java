@@ -46,6 +46,12 @@ public class Tester {
     }
 
     public void checkLogin(String userName) throws Exception {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e("TESTER: ", "Thread.sleep(1000) interrupted.");
+        }
+
         Assert.assertTrue("FAILED: Login", ParseUser.getCurrentUser().getUsername().equals(userName));
     }
 
